@@ -1,0 +1,13 @@
+services:
+  omni_contractors_db:
+    container_name: lawnovus_db
+    image: postgres:13.4-alpine
+    ports:
+      - "2345:5432"
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=lawnovus_db
+      - POSTGRES_PASSWORD=lawnovus_db_password
+      - POSTGRES_DB=lawnovus_db
+    volumes:
+      - ./.docker/tmp/pg:/var/lib/postgresql/data

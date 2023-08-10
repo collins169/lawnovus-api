@@ -1,0 +1,10 @@
+dist
+coverage
+node_modules
+.circleci
+src/database/migrations
+bin/
+package.json
+tsconfig.json
+.github/
+ormconfig.local.json

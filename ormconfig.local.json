@@ -1,0 +1,20 @@
+{
+  "name": "default",
+  "type": "postgres",
+  "host": "localhost",
+  "username": "lawnovus_db",
+  "password": "lawnovus_db_password",
+  "ssl": false,
+  "logging": true,
+  "database": "lawnovus_db",
+  "port": 2345,
+  "migrations": ["./src/database/migrations/*.ts", "./src/**/migrations/typeorm/*.ts"],
+  "entities": ["./src/**/entities/*.ts"],
+  "cli": {
+    "migrationsDir": "./src/database/migrations"
+  },
+  "seeds": ["src/**/seeds/*.seed.ts"],
+  "factories": ["src/**/factories/*.ts"],
+  "entityPrefix": "local-",
+  "migrationsTableName": "local-migrations"
+}

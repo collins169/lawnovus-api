@@ -1,0 +1,11 @@
+coverage/
+dist/
+.serverless/
+secrets/
+.vscode/*
+docker-compose.yml
+package.json
+tsconfig.json
+.github/
+serverless.yml
+ormconfig.local.json

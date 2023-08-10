@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+yarn lint:staged
+if grep -rnw './src/database/migrations' -e 'local'; then
+  echo 'Your migration contains the local stage rather than the stage from the env';
+  exit 1;
+fi
