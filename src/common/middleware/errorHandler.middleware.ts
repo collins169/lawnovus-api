@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { logger } from '../helpers/logger';
 import { TypeORMError } from 'typeorm';
-import { TokenExpiredError } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 export const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof HttpException) {
@@ -54,6 +54,16 @@ export const errorHandler = (error: Error, _req: Request, res: Response, _next: 
       error: 'TokenExpiredException',
     });
   }
+
+  if (error instanceof JsonWebTokenError) {
+    const statusCode = HttpStatus.UNAUTHORIZED;
+    return res.status(statusCode).json({
+      statusCode,
+      message: 'invalid auth token',
+      error: 'JsonWebTokenError',
+    });
+  }
+
   if (process.env.NODE_ENV === 'test') {
     console.error('error handler middleware', error);
   }
