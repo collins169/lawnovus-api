@@ -31,12 +31,6 @@ export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> =
     `/${process.env.STAGE}/database/lawnovus_db/DATABASE_PASSWORD`,
   ]);
 
-  // return {
-  //   host: process.env.DATABASE_URL,
-  //   username: process.env.DATABASE_USERNAME,
-  //   password: process.env.DATABASE_PASSWORD,
-  // };
-
   return {
     host: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_URL`],
     username: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_USERNAME`],
@@ -47,9 +41,7 @@ export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> =
 export const getConnectionOpts = async (): Promise<DataSourceOptions> => {
   const dbCredentials = await getlawnovusDBCredentials();
 
-  // In the multi dev environent we need to set this to dev so that it can share the database between the envs
-  const isMultiDevEnv = !/(dev|prod|local)/.test(process.env.STAGE || 'local');
-  const dbPrefix = isMultiDevEnv ? 'dev' : process.env.STAGE;
+  const dbPrefix = process.env.STAGE;
 
   return {
     name: TypeORMConnections.lawnovusDB,

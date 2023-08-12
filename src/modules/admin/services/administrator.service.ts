@@ -87,6 +87,7 @@ export const addAdmin = async (input: AddAdminInput, createdBy: string) => {
     });
     const newContactDetail = await transaction.save(contactDetailToInsert);
     const userToInsert = userRepository.create({
+      name: input.contactDetail.name,
       username: input.username,
       password: hashPassword,
       contactDetail: newContactDetail,

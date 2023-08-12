@@ -7,8 +7,8 @@ import { changePasswordInput } from './dto/changePassword.input';
 
 const router: express.Router = express.Router();
 
-router.patch('/change-password/self', validateBody(changePasswordInput), handleAsyncErrors(changePasswordCtrl));
 router.post('/', validateBody(AddAdminInput), handleAsyncErrors(addAdminCtrl));
 router.get('/', handleAsyncErrors(listAdminUserCtrl));
+router.patch('/change-password/self', validateBody(changePasswordInput), handleAsyncErrors(changePasswordCtrl));
 
 export const adminRoutes = router;
