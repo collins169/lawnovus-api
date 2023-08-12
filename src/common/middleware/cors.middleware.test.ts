@@ -9,44 +9,34 @@ describe('specifyCors', () => {
 
   beforeEach(() => {
     process.env.NODE_ENV = 'local';
-    process.env.FRONT_END_URL = 'http://app.dev.omnipresent.com';
+    process.env.FRONT_END_URL = 'http://app.dev.lawnovus.com';
   });
   afterEach(() => {
     process.env = cloneDeep(oldEnv);
   });
 
-  it.each(['qa', 'dev'])('allows connections from localhost in the %s environment', (env) => {
+  it('allows connections from localhost in the dev environment', () => {
     process.env.NODE_ENV = 'development';
-    process.env.STAGE = env;
+    process.env.STAGE = 'dev';
     specifyCors();
     expect(cors).toHaveBeenCalledWith(
       expect.objectContaining({
-        origin: [
-          'http://app.dev.omnipresent.com',
-          'http://localhost:3000',
-          'http://localhost:3001',
-          /https:\/\/(?:[^.]+\.)?app\.dev\.omnipresent\.com/,
-        ],
+        origin: ['http://app.dev.lawnovus.com', 'http://localhost:3000', 'http://localhost:3001'],
       }),
     );
   });
   it('only allows connections from the specified FRONT_END_URL in prod', () => {
     process.env.NODE_ENV = 'production';
-    process.env.FRONT_END_URL = 'http://app.omnipresent.com';
+    process.env.FRONT_END_URL = 'http://app.lawnovus.com';
     specifyCors();
     expect(cors).toHaveBeenCalledWith(
       expect.objectContaining({
-        origin: ['http://app.omnipresent.com'],
+        origin: ['http://app.lawnovus.com'],
       }),
     );
     expect(cors).not.toHaveBeenCalledWith(
       expect.objectContaining({
-        origin: [
-          'http://app.dev.omnipresent.com',
-          'http://localhost:3000',
-          'http://localhost:3001',
-          /https:\/\/(?:[^.]+\.)?app\.dev\.omnipresent\.com/,
-        ],
+        origin: ['http://app.dev.lawnovus.com', 'http://localhost:3000', 'http://localhost:3001'],
       }),
     );
   });

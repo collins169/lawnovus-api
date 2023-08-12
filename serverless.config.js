@@ -42,7 +42,7 @@ const configMap = {
     env: {
       ...baseDevConfig.env,
       NODE_ENV: 'development',
-      FRONT_END_URL: 'UNKNOWN',
+      FRONT_END_URL: 'https://app.dev.lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/dev/cloudwatch/log/GROUP_NAME}',
     },
     restApi: {
@@ -64,7 +64,7 @@ const configMap = {
     env: {
       ...baseDevConfig.env,
       NODE_ENV: 'production',
-      FRONT_END_URL: 'UNKNOWN',
+      FRONT_END_URL: 'https://app.lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/prod/cloudwatch/log/GROUP_NAME}',
     },
     serverlessBucketName: 'lawnovus-serverless-deployment-bucket-prod',

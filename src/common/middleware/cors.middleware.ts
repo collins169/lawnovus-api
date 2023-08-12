@@ -7,10 +7,7 @@ export function specifyCors() {
   const allowedOrigins: Array<string | RegExp> = [process.env.FRONT_END_URL];
 
   if (!isProd) {
-    const originsList = [
-      ...[3000, 3001].map((port) => `http://localhost:${port}`),
-      /https:\/\/(?:[^.]+\.)?app\.dev\.omnipresent\.com/,
-    ];
+    const originsList = [...[3000, 3001].map((port) => `http://localhost:${port}`)];
     allowedOrigins.push(...originsList);
   }
 
