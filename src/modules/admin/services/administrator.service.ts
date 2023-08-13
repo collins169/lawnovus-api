@@ -1,10 +1,8 @@
 import { ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import { isEmpty, omit } from 'lodash';
 import { getEntityManager } from '../../../database/getEntityManager';
-import { AuthUserInput } from '../../auth/dto/authUser.input';
-import { User } from '../../users/entities/user.entity';
 import {
   getContactDetailRepository,
   isEmailExsiting,
@@ -12,49 +10,12 @@ import {
 } from '../../users/repositories/contact-detail.repository';
 import { getUserRepository } from '../../users/repositories/user.repository';
 import { AddAdminInput } from '../dto/addAdmin.input';
-import { Administrator } from '../entities/administrator.entity';
 import {
   getAdministratorById,
   getAdministratorByUserName,
   getAdministratorRepository,
   getAdministratorUsers,
 } from '../repositories/administrator.repository';
-
-export const adminLogin = async (
-  input: AuthUserInput,
-): Promise<{ user: Partial<User> & Partial<Administrator>; token: string }> => {
-  const admin = await getAdministratorByUserName(input.username);
-  if (!admin) {
-    throw new UnauthorizedException('Invalid username/password');
-  }
-  const { user } = admin;
-  const match = compareSync(input.password, user.password);
-  if (!match) {
-    throw new UnauthorizedException('Invalid username/password');
-  }
-  if (!user.isActive) {
-    throw new UnauthorizedException('User is not active, kindly contact administrator');
-  }
-
-  //Generate jwt token
-  const token = sign(
-    { username: user.username, subscriber: user.subscriber },
-    process.env.JWT_SECRET || 'lawnovus-api',
-    {
-      algorithm: 'HS256',
-      expiresIn: '1d',
-      subject: user.username,
-    },
-  );
-
-  return {
-    token,
-    user: {
-      ...admin,
-      ...omit(user, ['password']),
-    },
-  };
-};
 
 export const addAdmin = async (input: AddAdminInput, createdBy: string) => {
   const userRepository = await getUserRepository();
@@ -139,25 +100,6 @@ export const changeAdminPassword = async ({
 };
 
 export const listAdminUser = async () => {
-  return await getAdministratorUsers();
-};
-
-export const validateToken = async (token: string) => {
-  if (isEmpty(token)) {
-    throw new UnauthorizedException('No Token Provided');
-  }
-  if (!token.includes('Bearer')) {
-    throw new UnauthorizedException('invalid Bearer token');
-  }
-  const splitToken = token.split(' ')[1];
-
-  const tokenValue = verify(splitToken, process.env.JWT_SECRET || 'lawnovus-api') as JwtPayload;
-
-  const username = tokenValue.sub || '';
-
-  if (isEmpty(username)) {
-    throw new UnauthorizedException('invalid token');
-  }
-
-  return await getAdministratorByUserName(username);
+  const list = await getAdministratorUsers();
+  return list.map((admin) => omit(admin, ['password']));
 };

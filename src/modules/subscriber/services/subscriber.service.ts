@@ -6,7 +6,7 @@ import {
   updateSubscriber,
 } from '../repositories/subscriber.repository';
 import { genSaltSync, hashSync } from 'bcryptjs';
-import { omit } from 'lodash';
+import { map, omit } from 'lodash';
 import { getEntityManager } from '../../../database/getEntityManager';
 import { RegisterInput } from '../dto/register.input';
 import { getOrganizationTypeById } from '../../organizationType/services/organizationType.service';
@@ -18,9 +18,11 @@ import {
 import { getUserRepository, getOneUserByUsername } from '../../users/repositories/user.repository';
 import { SubscriberTypes } from '../../users/types/user.types';
 import { Status } from '../types';
+import { OrganizationType } from '../../organizationType/entities/organizationType.entity';
 
 export const getAllSubcribers = async () => {
-  return await getAllSubscriber();
+  const list = await getAllSubscriber();
+  return list.map((subscriber) => map(subscriber.users, (user) => omit(user, ['password'])));
 };
 
 export const getSubscriberById = async (id: string) => {
@@ -36,7 +38,7 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
   const userRepository = await getUserRepository();
   const subscriberRepository = await getSubscriberRepository();
   const contactDetailRepository = await getContactDetailRepository();
-  let organizationType;
+  let organizationType: OrganizationType;
   if (input.subscriberType === SubscriberTypes.INSTITUTIONAL) {
     organizationType = await getOrganizationTypeById(input.organizationTypeId);
   }

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { validateToken } from '../../modules/admin/services/administrator.service';
 import { UnauthorizedException } from '@nestjs/common';
+import { validateToken } from '../../modules/auth/services/auth.service';
 
 export const JWTTokenHandler = async (req: Request, _res: Response, next: NextFunction) => {
   const { authorization } = req.headers;

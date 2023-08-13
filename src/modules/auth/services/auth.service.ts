@@ -2,8 +2,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthUserInput } from '../dto/authUser.input';
 import { getOneUserByUsername, getUserRepository } from '../../users/repositories/user.repository';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import { User } from '../../users/entities/user.entity';
+import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import { RegisterInput } from '../../subscriber/dto/register.input';
 import { getOrganizationTypeById } from '../../organizationType/services/organizationType.service';
 import { getEntityManager } from '../../../database/getEntityManager';
@@ -14,9 +13,11 @@ import {
   isPhoneNumberExsiting,
 } from '../../users/repositories/contact-detail.repository';
 import { SubscriberTypes } from '../../users/types/user.types';
-import { omit } from 'lodash';
+import { isEmpty, omit } from 'lodash';
+import { getAdministratorByUserName } from '../../admin/repositories/administrator.repository';
+import { getUserByUsername } from '../../users/services/user.service';
 
-export const login = async (input: AuthUserInput): Promise<{ user: Partial<User>; token: string }> => {
+export const login = async (input: AuthUserInput): Promise<{ user: Record<string, unknown>; token: string }> => {
   const user = await getOneUserByUsername(input.username);
   if (!user) {
     throw new UnauthorizedException('Invalid username/password');
@@ -42,7 +43,44 @@ export const login = async (input: AuthUserInput): Promise<{ user: Partial<User>
 
   return {
     token,
-    user: omit(user, ['password']),
+    user: {
+      ...omit(user, ['password']),
+      role: 'subscriber',
+    },
+  };
+};
+
+export const adminLogin = async (input: AuthUserInput): Promise<{ user: Record<string, unknown>; token: string }> => {
+  const admin = await getAdministratorByUserName(input.username);
+  if (!admin) {
+    throw new UnauthorizedException('Invalid username/password');
+  }
+  const { user } = admin;
+  const match = compareSync(input.password, user.password);
+  if (!match) {
+    throw new UnauthorizedException('Invalid username/password');
+  }
+  if (!user.isActive) {
+    throw new UnauthorizedException('User is not active, kindly contact administrator');
+  }
+
+  //Generate jwt token
+  const token = sign(
+    { username: user.username, subscriber: user.subscriber },
+    process.env.JWT_SECRET || 'lawnovus-api',
+    {
+      algorithm: 'HS256',
+      expiresIn: '1d',
+      subject: user.username,
+    },
+  );
+
+  return {
+    token,
+    user: {
+      ...omit(user, ['password']),
+      role: admin?.type,
+    },
   };
 };
 
@@ -100,4 +138,31 @@ export const register = async (input: RegisterInput) => {
     const newUser = await transaction.save(userToInsert);
     return { user: omit(newUser, ['password']), subscriber: newSubscriber, contactDetail: newContactDetail };
   });
+};
+
+export const validateToken = async (token: string) => {
+  if (isEmpty(token)) {
+    throw new UnauthorizedException('No Token Provided');
+  }
+  if (!token.includes('Bearer')) {
+    throw new UnauthorizedException('invalid Bearer token');
+  }
+  const splitToken = token.split(' ')[1];
+
+  const tokenValue = verify(splitToken, process.env.JWT_SECRET || 'lawnovus-api') as JwtPayload;
+
+  const username = tokenValue.sub || '';
+
+  if (isEmpty(username)) {
+    throw new UnauthorizedException('invalid token');
+  }
+
+  const [admin, user] = await Promise.all([getAdministratorByUserName(username), getUserByUsername(username)]);
+
+  const validatdUser = {
+    ...omit(user, ['subscriber', 'password']),
+    role: admin?.type || 'subscriber',
+  };
+
+  return validatdUser;
 };
