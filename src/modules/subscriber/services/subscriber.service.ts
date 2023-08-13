@@ -22,7 +22,13 @@ import { OrganizationType } from '../../organizationType/entities/organizationTy
 
 export const getAllSubcribers = async () => {
   const list = await getAllSubscriber();
-  return list.map((subscriber) => map(subscriber.users, (user) => omit(user, ['password'])));
+  const mappedlist = map(list, (subscriber) => {
+    return {
+      ...subscriber,
+      user: map(subscriber.users, (user) => omit(user, ['password'])),
+    };
+  });
+  return mappedlist;
 };
 
 export const getSubscriberById = async (id: string) => {

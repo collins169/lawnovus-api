@@ -7,6 +7,7 @@ import {
   updateType,
 } from '../repositories/organizationType.repository';
 import { OrganizationType } from '../entities/organizationType.entity';
+import { OrganizationTypeStatus } from '../types';
 
 export const addOrganizationType = async ({ name, description }: Pick<OrganizationType, 'name' | 'description'>) => {
   return await createType({ name, description });
@@ -41,7 +42,7 @@ export const editOrganizationType = async (
   });
 };
 
-export const updateOrganizationTypeStatus = async (id: string, status: 'DEACTIVATE' | 'ACTIVATE') => {
+export const updateOrganizationTypeStatus = async (id: string, status: OrganizationTypeStatus) => {
   const organizationType = await getTypeById(id);
   if (!organizationType) {
     throw new NotFoundException(`organization type with id: ${id} is not found`);

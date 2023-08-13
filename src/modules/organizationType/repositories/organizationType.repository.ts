@@ -25,7 +25,11 @@ export const getTypeById = async (id: string) => {
 
 export const getAllType = async () => {
   const repository = await getOrganizationTypeRepository();
-  return await repository.find({});
+  return await repository.find({
+    order: {
+      createdAt: 'DESC',
+    },
+  });
 };
 
 export const updateType = async ({ old, input }: { input: Partial<OrganizationType>; old: OrganizationType }) => {

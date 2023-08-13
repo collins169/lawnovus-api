@@ -8,6 +8,7 @@ import {
   editOrganizationTypeCtrl,
   getOrganizationTypeByIdCtrl,
   getOrganizationTypesCtrl,
+  changeOrganizationTypeStatusCtrl,
 } from './controllers/organizationType.controller';
 
 const router: express.Router = express.Router();
@@ -16,6 +17,7 @@ router.post('/', validateBody(OrganizationTypeInput), handleAsyncErrors(addOrgan
 router.get('/', handleAsyncErrors(getOrganizationTypesCtrl));
 router.get('/:id', handleAsyncErrors(getOrganizationTypeByIdCtrl));
 router.patch('/:id', validateBody(OrganizationTypeInput), handleAsyncErrors(editOrganizationTypeCtrl));
+router.patch('/:id/:status', handleAsyncErrors(changeOrganizationTypeStatusCtrl));
 router.delete('/:id', handleAsyncErrors(deleteOrganizationTypeCtrl));
 
 export const organizationTypeRoutes = router;

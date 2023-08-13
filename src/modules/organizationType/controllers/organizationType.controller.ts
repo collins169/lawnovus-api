@@ -10,6 +10,7 @@ import {
 } from '../services/organizationType.service';
 import { HttpStatus } from '@nestjs/common';
 import { OrganizationTypeInput } from '../dto/organizationType.input';
+import { OrganizationTypeStatus } from '../types';
 
 export const getOrganizationTypeByIdCtrl = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
@@ -51,9 +52,9 @@ export const deleteOrganizationTypeCtrl = async (req: AuthenticatedRequest, res:
   return res.sendStatus(HttpStatus.NO_CONTENT);
 };
 
-// export const changeOrganizationTypeStatusCtrl = async (req: AuthenticatedRequest, res: Response) => {
-//   const { id, status } = req.params;
+export const changeOrganizationTypeStatusCtrl = async (req: AuthenticatedRequest, res: Response) => {
+  const { id, status } = req.params;
 
-//   await updateOrganizationTypeStatus(id, status);
-//   return res.sendStatus(HttpStatus.NO_CONTENT);
-// };
+  await updateOrganizationTypeStatus(id, status as OrganizationTypeStatus);
+  return res.sendStatus(HttpStatus.NO_CONTENT);
+};

@@ -32,7 +32,7 @@ export const getAdministratorUsers = async () => {
   return await repository.find({
     relations: ['user'],
     order: {
-      createdAt: 'ASC',
+      createdAt: 'DESC',
     },
   });
 };
