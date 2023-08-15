@@ -5,7 +5,7 @@ export const getContactDetailRepository = async () => {
   return await getEntityRepository(ContactDetail);
 };
 
-export const isEmailExsiting = async (email: string) => {
+export const isEmailExisting = async (email: string) => {
   const contactRepository = await getContactDetailRepository();
   const contact = await contactRepository.findOne({
     where: {
@@ -15,7 +15,7 @@ export const isEmailExsiting = async (email: string) => {
   return !!contact;
 };
 
-export const isPhoneNumberExsiting = async (phone: string) => {
+export const isPhoneNumberExisting = async (phone: string) => {
   const contactRepository = await getContactDetailRepository();
   const contact = await contactRepository.findOne({
     where: {

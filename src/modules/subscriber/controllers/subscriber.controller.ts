@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from '../../../common/types';
 import {
   changeSubscriberStatus,
   createSubscriber,
-  getAllSubcribers,
+  getAllSubscribers,
   getSubscriberById,
 } from '../services/subscriber.service';
 import { RegisterInput } from '../dto/register.input';
@@ -20,7 +20,7 @@ export const createSubscriberCtrl = async (req: AuthenticatedRequest, res: Respo
 };
 
 export const getAllSubscriberCtrl = async (req: AuthenticatedRequest, res: Response) => {
-  const subscribers = await getAllSubcribers();
+  const subscribers = await getAllSubscribers();
   return res.status(HttpStatus.OK).json(subscribers);
 };
 

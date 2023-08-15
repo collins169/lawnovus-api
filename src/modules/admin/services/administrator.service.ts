@@ -5,8 +5,8 @@ import { isEmpty, omit } from 'lodash';
 import { getEntityManager } from '../../../database/getEntityManager';
 import {
   getContactDetailRepository,
-  isEmailExsiting,
-  isPhoneNumberExsiting,
+  isEmailExisting,
+  isPhoneNumberExisting,
 } from '../../users/repositories/contact-detail.repository';
 import { getUserRepository } from '../../users/repositories/user.repository';
 import { AddAdminInput } from '../dto/addAdmin.input';
@@ -23,8 +23,8 @@ export const addAdmin = async (input: AddAdminInput, createdBy: string) => {
   const contactDetailRepository = await getContactDetailRepository();
   const [user, emailExist, phoneExist] = await Promise.all([
     getAdministratorByUserName(input.username),
-    isEmailExsiting(input.contactDetail.email),
-    isPhoneNumberExsiting(input.contactDetail.phone),
+    isEmailExisting(input.contactDetail.email),
+    isPhoneNumberExisting(input.contactDetail.phone),
   ]);
 
   if (user) {

@@ -3,6 +3,7 @@ import {
   getAllSubscriber,
   getOneSubscriber,
   getSubscriberRepository,
+  isSubscriberPhoneNumberExisting,
   updateSubscriber,
 } from '../repositories/subscriber.repository';
 import { genSaltSync, hashSync } from 'bcryptjs';
@@ -12,15 +13,16 @@ import { RegisterInput } from '../dto/register.input';
 import { getOrganizationTypeById } from '../../organizationType/services/organizationType.service';
 import {
   getContactDetailRepository,
-  isEmailExsiting,
-  isPhoneNumberExsiting,
+  isEmailExisting,
+  isPhoneNumberExisting,
 } from '../../users/repositories/contact-detail.repository';
 import { getUserRepository, getOneUserByUsername } from '../../users/repositories/user.repository';
 import { SubscriberTypes } from '../../users/types/user.types';
 import { Status } from '../types';
 import { OrganizationType } from '../../organizationType/entities/organizationType.entity';
+import { getAdministratorById } from '../../admin/repositories/administrator.repository';
 
-export const getAllSubcribers = async () => {
+export const getAllSubscribers = async () => {
   const list = await getAllSubscriber();
   const mappedlist = map(list, (subscriber) => {
     return {
@@ -48,10 +50,12 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
   if (input.subscriberType === SubscriberTypes.INSTITUTIONAL) {
     organizationType = await getOrganizationTypeById(input.organizationTypeId);
   }
-  const [user, emailExist, phoneExist] = await Promise.all([
+  const [user, emailExist, subscriberPhoneExist, phoneExist, admin] = await Promise.all([
     getOneUserByUsername(input.username),
-    isEmailExsiting(input.contactDetail.email),
-    isPhoneNumberExsiting(input?.institutionPhone || input.contactDetail.phone),
+    isEmailExisting(input.contactDetail.email),
+    isSubscriberPhoneNumberExisting(input?.institutionPhone),
+    isPhoneNumberExisting(input.contactDetail.phone),
+    getAdministratorById(createdBy),
   ]);
 
   if (user) {
@@ -59,11 +63,15 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
   }
 
   if (emailExist) {
-    throw new ConflictException('email already exist');
+    throw new ConflictException('contact person email already exist');
+  }
+
+  if (subscriberPhoneExist) {
+    throw new ConflictException('institutional phone number already exist');
   }
 
   if (phoneExist) {
-    throw new ConflictException('phone already exist');
+    throw new ConflictException('contact person phone already exist');
   }
   console.log('validation done');
   const salt = genSaltSync(10);
@@ -77,9 +85,7 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
       phone: input.institutionPhone || '',
       address: input.institutionAddress || '',
       isActive: true,
-      createdBy: {
-        id: createdBy,
-      },
+      createdBy: admin,
     });
     const newSubscriber = await transaction.save(subscriberToInsert);
     const contactDetailToInsert = contactDetailRepository.create({

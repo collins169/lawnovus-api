@@ -43,3 +43,13 @@ export const updateSubscriber = async (oldRecord: Subscriber, input: Partial<Sub
   const subscriberToUpdate = repository.merge(oldRecord, { ...input, updatedBy: { id: updatedBy } });
   return await repository.save(subscriberToUpdate);
 };
+
+export const isSubscriberPhoneNumberExisting = async (phone: string) => {
+  const repository = await getSubscriberRepository();
+  const subscriber = await repository.findOne({
+    where: {
+      phone,
+    },
+  });
+  return !!subscriber;
+};

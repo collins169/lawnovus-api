@@ -13,8 +13,8 @@ import { RegisterInput } from '../../subscriber/dto/register.input';
 import { getOrganizationTypeById } from '../../organizationType/services/organizationType.service';
 import {
   getContactDetailRepository,
-  isEmailExsiting,
-  isPhoneNumberExsiting,
+  isEmailExisting,
+  isPhoneNumberExisting,
 } from '../repositories/contact-detail.repository';
 import { getSubscriberRepository } from '../../subscriber/repositories/subscriber.repository';
 import { SubscriberTypes } from '../types/user.types';
@@ -29,8 +29,8 @@ export const createUser = async (input: RegisterInput) => {
   }
   const [user, emailExist, phoneExist] = await Promise.all([
     getOneUserByUsername(input.username),
-    isEmailExsiting(input.contactDetail.email),
-    isPhoneNumberExsiting(input?.institutionPhone || input.contactDetail.phone),
+    isEmailExisting(input.contactDetail.email),
+    isPhoneNumberExisting(input?.institutionPhone || input.contactDetail.phone),
   ]);
 
   if (user) {

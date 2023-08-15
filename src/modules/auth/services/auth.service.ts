@@ -9,8 +9,8 @@ import { getEntityManager } from '../../../database/getEntityManager';
 import { getSubscriberRepository } from '../../subscriber/repositories/subscriber.repository';
 import {
   getContactDetailRepository,
-  isEmailExsiting,
-  isPhoneNumberExsiting,
+  isEmailExisting,
+  isPhoneNumberExisting,
 } from '../../users/repositories/contact-detail.repository';
 import { SubscriberTypes } from '../../users/types/user.types';
 import { isEmpty, omit } from 'lodash';
@@ -94,8 +94,8 @@ export const register = async (input: RegisterInput) => {
   }
   const [user, emailExist, phoneExist] = await Promise.all([
     getOneUserByUsername(input.username),
-    isEmailExsiting(input.contactDetail.email),
-    isPhoneNumberExsiting(input?.institutionPhone || input.contactDetail.phone),
+    isEmailExisting(input.contactDetail.email),
+    isPhoneNumberExisting(input?.institutionPhone || input.contactDetail.phone),
   ]);
 
   if (user) {
