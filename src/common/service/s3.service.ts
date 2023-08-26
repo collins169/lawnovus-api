@@ -29,10 +29,6 @@ export class S3Service {
       this.s3 = new S3Client({
         region: process.env.AWS_REGION || 'eu-north-1',
         apiVersion: '2006-03-01',
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        },
       });
     }
   }
