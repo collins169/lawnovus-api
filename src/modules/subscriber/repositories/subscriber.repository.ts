@@ -53,3 +53,8 @@ export const isSubscriberPhoneNumberExisting = async (phone: string) => {
   });
   return !!subscriber;
 };
+
+export const deleteSubscriber = async (id: string | string[]) => {
+  const repository = await getSubscriberRepository();
+  return repository.softDelete(id);
+};

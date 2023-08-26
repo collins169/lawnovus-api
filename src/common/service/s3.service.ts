@@ -1,4 +1,3 @@
-import AWS, { S3 } from 'aws-sdk';
 import {
   S3Client,
   CreateBucketCommand,
@@ -10,7 +9,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { logger } from '../helpers/logger';
 
-class S3Service {
+export class S3Service {
   private s3: S3Client;
   private bucketName: string;
 
@@ -55,6 +54,7 @@ class S3Service {
       await this.s3.send(command);
     } catch (error) {
       logger.error('Error uploading file to S3 bucket:', error);
+      throw error;
     }
   }
 
@@ -69,6 +69,7 @@ class S3Service {
       return Buffer.from(response.Body as unknown as Buffer);
     } catch (error) {
       logger.error('Error downloading file from S3 bucket:', error);
+      throw error;
     }
   }
 

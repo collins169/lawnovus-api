@@ -4,8 +4,8 @@ import { expressAPI } from './express';
 
 const request = supertest(expressAPI());
 
-describe('OmniContractors-Api API', () => {
+describe('Lawnvous-Api API', () => {
   it('returns 200 for any incoming requests', async () => {
-    await request.get('/').expect(HttpStatus.OK);
+    await request.get('/ping').expect(HttpStatus.OK);
   });
 });

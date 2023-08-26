@@ -17,6 +17,18 @@ export const getAdministratorByUserName = async (username: string) => {
   });
 };
 
+export const getAdministratorByUserId = async (userId: string) => {
+  const repository = await getAdministratorRepository();
+  return await repository.findOne({
+    where: {
+      user: {
+        id: userId,
+      },
+    },
+    relations: ['user'],
+  });
+};
+
 export const getAdministratorById = async (id: string) => {
   const repository = await getAdministratorRepository();
   return await repository.findOne({

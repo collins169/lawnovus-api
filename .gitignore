@@ -174,3 +174,10 @@ lerna-debug.log*
 .env.local
 
 /.readme-how-to-get-started
+
+# S3 local files
+# Deprecated old default S3 local directory
+/buckets/
+# New S3 local directory
+# Ignore documents used for E2E tests and seed document data
+/.s3/

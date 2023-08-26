@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../../../common/types';
 import {
   addOrganizationType,
+  deleteMultipleOrganizationType,
   deleteOrganizationType,
   editOrganizationType,
   getOrganizationTypeById,
@@ -47,6 +48,13 @@ export const editOrganizationTypeCtrl = async (req: AuthenticatedRequest, res: R
 
 export const deleteOrganizationTypeCtrl = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
+
+  //check if the id contains multiple ids
+  if (id.includes('+')) {
+    const ids = id.split('+');
+    await deleteMultipleOrganizationType(ids);
+    return res.sendStatus(HttpStatus.NO_CONTENT);
+  }
 
   await deleteOrganizationType(id);
   return res.sendStatus(HttpStatus.NO_CONTENT);

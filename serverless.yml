@@ -20,6 +20,12 @@ custom:
     noPrependStageInUrl: true
     noTimeout: true
 
+  s3:
+    port: 4200
+    directory: '.s3'
+    cors: ../s3-cors.xml
+    allowMismatchedSignatures: true
+
   customCertificate:
     certificateName: ${self:custom.config.certificateName}
     hostedZoneIds: ${self:custom.config.hostedZoneIds}
@@ -47,6 +53,8 @@ provider:
   name: aws
   apiGateway:
     disableDefaultEndpoint: true
+    binaryMediaTypes:
+      - '*/*'
   region: eu-west-2
   runtime: nodejs16.x
   stage: ${self:custom.stage}

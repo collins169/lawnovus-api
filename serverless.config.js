@@ -11,6 +11,7 @@ const baseDevConfig = {
   serverlessBucketName: 'lawnovus-serverless-deployment-bucket-dev',
   env: {
     COUNTRY_CODE: 'GH',
+    DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket',
   },
 };
 

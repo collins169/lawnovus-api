@@ -3,6 +3,8 @@ import { AuthenticatedRequest } from '../../../common/types';
 import {
   changeSubscriberStatus,
   createSubscriber,
+  deleteMultipleSubscriber,
+  deleteSubscriber,
   getAllSubscribers,
   getSubscriberById,
 } from '../services/subscriber.service';
@@ -37,4 +39,17 @@ export const changeSubscriberStatusByIdCtrl = async (req: UpdateStatusRequest, r
   } = req;
   const subscriber = await changeSubscriberStatus({ subscriberId: id, status, updatedBy });
   return res.status(HttpStatus.OK).json(subscriber);
+};
+
+export const deleteSubscriberCtrl = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  //check if the id contains multiple ids
+  if (id.includes('+')) {
+    const ids = id.split('+');
+    await deleteMultipleSubscriber(ids);
+    return res.sendStatus(HttpStatus.NO_CONTENT);
+  }
+
+  await deleteSubscriber(id);
+  return res.sendStatus(HttpStatus.NO_CONTENT);
 };

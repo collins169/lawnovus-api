@@ -1,26 +1,27 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import {
-  getAllSubscriber,
-  getOneSubscriber,
-  getSubscriberRepository,
-  isSubscriberPhoneNumberExisting,
-  updateSubscriber,
-} from '../repositories/subscriber.repository';
 import { genSaltSync, hashSync } from 'bcryptjs';
 import { map, omit } from 'lodash';
 import { getEntityManager } from '../../../database/getEntityManager';
-import { RegisterInput } from '../dto/register.input';
+import { getAdministratorByUserId } from '../../admin/repositories/administrator.repository';
+import { OrganizationType } from '../../organizationType/entities/organizationType.entity';
 import { getOrganizationTypeById } from '../../organizationType/services/organizationType.service';
 import {
   getContactDetailRepository,
   isEmailExisting,
   isPhoneNumberExisting,
 } from '../../users/repositories/contact-detail.repository';
-import { getUserRepository, getOneUserByUsername } from '../../users/repositories/user.repository';
+import { getOneUserByUsername, getUserRepository } from '../../users/repositories/user.repository';
 import { SubscriberTypes } from '../../users/types/user.types';
+import { RegisterInput } from '../dto/register.input';
+import {
+  deleteSubscriber as deleteSubscriberRepo,
+  getAllSubscriber,
+  getOneSubscriber,
+  getSubscriberRepository,
+  isSubscriberPhoneNumberExisting,
+  updateSubscriber,
+} from '../repositories/subscriber.repository';
 import { Status } from '../types';
-import { OrganizationType } from '../../organizationType/entities/organizationType.entity';
-import { getAdministratorById } from '../../admin/repositories/administrator.repository';
 
 export const getAllSubscribers = async () => {
   const list = await getAllSubscriber();
@@ -55,7 +56,7 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
     isEmailExisting(input.contactDetail.email),
     isSubscriberPhoneNumberExisting(input?.institutionPhone),
     isPhoneNumberExisting(input.contactDetail.phone),
-    getAdministratorById(createdBy),
+    getAdministratorByUserId(createdBy),
   ]);
 
   if (user) {
@@ -121,4 +122,16 @@ export const changeSubscriberStatus = async ({
     throw new NotFoundException('Subscriber not found');
   }
   await updateSubscriber(subscriber, { isActive: status === 'ACTIVATE' }, updatedBy);
+};
+
+export const deleteSubscriber = async (id: string) => {
+  const subscriber = await getOneSubscriber(id);
+  if (!subscriber) {
+    throw new NotFoundException(`subscriber with id: ${id} is not found`);
+  }
+  return await deleteSubscriberRepo(id);
+};
+
+export const deleteMultipleSubscriber = async (ids: string[]) => {
+  return await deleteSubscriberRepo(ids);
 };

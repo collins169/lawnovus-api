@@ -62,3 +62,7 @@ export const deleteOrganizationType = async (id: string) => {
   }
   return await deleteType(id);
 };
+
+export const deleteMultipleOrganizationType = async (ids: string[]) => {
+  return await deleteType(ids);
+};

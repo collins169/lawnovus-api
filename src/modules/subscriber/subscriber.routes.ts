@@ -5,6 +5,7 @@ import { RegisterInput } from '../subscriber/dto/register.input';
 import {
   changeSubscriberStatusByIdCtrl,
   createSubscriberCtrl,
+  deleteSubscriberCtrl,
   getAllSubscriberCtrl,
   getSubscriberByIdCtrl,
 } from './controllers/subscriber.controller';
@@ -16,5 +17,6 @@ router.post('/', validateBody(RegisterInput), handleAsyncErrors(createSubscriber
 router.get('/', handleAsyncErrors(getAllSubscriberCtrl));
 router.get('/:id', handleAsyncErrors(getSubscriberByIdCtrl));
 router.patch('/:id/:status', UpdateStatusInputValidator, handleAsyncErrors(changeSubscriberStatusByIdCtrl));
+router.delete('/:id', handleAsyncErrors(deleteSubscriberCtrl));
 
 export const subscriberRoutes = router;

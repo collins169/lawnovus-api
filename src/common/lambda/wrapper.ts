@@ -44,7 +44,6 @@ export const apiGatewayLambdaWrapper = (
 ): serverless.Handler => {
   return async (event, context: Context) => {
     const updatedContext = await defaultLambdaWrapper(context, options);
-
     return eventHandler(event, updatedContext);
   };
 };

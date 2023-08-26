@@ -38,7 +38,7 @@ export const updateType = async ({ old, input }: { input: Partial<OrganizationTy
   return await repository.save(typeToUpdate);
 };
 
-export const deleteType = async (id: string) => {
+export const deleteType = async (id: string | string[]) => {
   const repository = await getOrganizationTypeRepository();
   return await repository.softDelete(id);
 };
