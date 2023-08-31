@@ -11,7 +11,6 @@ const baseDevConfig = {
   serverlessBucketName: 'lawnovus-serverless-deployment-bucket-dev',
   env: {
     COUNTRY_CODE: 'GH',
-    DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket',
   },
 };
 
@@ -24,6 +23,7 @@ const configMap = {
       DATABASE_USERNAME: 'lawnovus_db',
       DATABASE_PASSWORD: 'lawnovus_db_password',
       FRONT_END_URL: 'http://localhost:3000',
+      DOCUMENT_BUCKET_NAME: 'test-bucket',
     },
     restApi: {
       accessLoggingEnabled: false,
@@ -45,6 +45,7 @@ const configMap = {
       NODE_ENV: 'development',
       FRONT_END_URL: 'https://app.dev.lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/dev/cloudwatch/log/GROUP_NAME}',
+      DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket',
     },
     restApi: {
       accessLoggingEnabled: false,
@@ -67,6 +68,7 @@ const configMap = {
       NODE_ENV: 'production',
       FRONT_END_URL: 'https://app.lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/prod/cloudwatch/log/GROUP_NAME}',
+      DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket-prod',
     },
     serverlessBucketName: 'lawnovus-serverless-deployment-bucket-prod',
     restApi: {
