@@ -1,0 +1,163 @@
+service: lawnovus-api
+
+frameworkVersion: "3"
+
+custom:
+  stage: ${opt:stage, 'local'}
+
+  config: ${file(serverless.config.js)}
+
+  resourcesMap:
+    vpc: 
+      securityGroupIds:
+        - ${ssm:/networking/app/SECURITY_GROUP_ID}
+      subnetIds: ${ssm:/networking/app/PRIVATE_SUBNET_IDS}
+
+  serverless-offline:
+    httpPort: 4400
+    websocketPort: 4501
+    lambdaPort: 4502
+    noPrependStageInUrl: true
+    noTimeout: true
+
+  s3:
+    port: 4200
+    directory: '.s3'
+    cors: ../s3-cors.xml
+    allowMismatchedSignatures: true
+
+  customCertificate:
+    certificateName: ${self:custom.config.certificateName}
+    hostedZoneIds: ${self:custom.config.hostedZoneIds}
+    region: eu-west-2 # RestAPI Edge Gateway requires certs to be available in us-east-1
+
+  customDomain:
+    domainName: ${self:custom.config.domainName}
+    stage: ${self:custom.stage}
+    certificateName: ${self:custom.config.certificateName}
+    createRoute53Record: true
+    endpointType: edge
+    securityPolicy: tls_1_2
+    apiType: rest
+    autoDomain: true
+
+  hooks:
+    after:deploy:deploy:
+      - ./hooks/runMigration.sh ${self:custom.stage} ${self:custom.config.dbMigration.url} ${self:custom.config.dbMigration.migrationKey}
+
+  prune: # used by serverless-prune-plugin to free up Lambda code storage
+    automatic: true
+    number: ${self:custom.config.numberOfLambdaVersions} # leave N previous Lambda versions in storage
+
+provider:
+  name: aws
+  apiGateway:
+    disableDefaultEndpoint: true
+    binaryMediaTypes:
+      - '*/*'
+  region: eu-west-2
+  runtime: nodejs16.x
+  stage: ${self:custom.stage}
+  stackName: ${self:custom.config.stackName}
+  apiName: ${self:custom.config.apiName}
+  endpointType: EDGE
+  profile: ${self:custom.config.awsProfile}
+  tags:
+    version: ${env:SHORT_SHA, 'na'}
+  environment: ${self:custom.config.env}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:*
+            - sqs:*
+            - logs:*
+            - ssm:*
+            - events:PutEvents
+          Resource: '*'
+  deploymentBucket:
+    name: ${self:custom.config.serverlessBucketName}
+  logs:
+    restApi:
+      accessLogging: ${self:custom.config.restApi.accessLoggingEnabled}
+      executionLogging: ${self:custom.config.restApi.executionLoggingEnabled}
+
+functions:
+  api:
+    timeout: 30
+    handler: dist/app.handler
+    vpc: ${self:custom.resourcesMap.vpc}
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: /{PROXY+}
+
+package:
+  individually: false
+  patterns:
+    # Explicit include
+    - 'dist/**'
+    # Excluded directories
+    - '!.circleci/**'
+    - '!.dynamodb/**'
+    - '!.git/**'
+    - '!.github/**'
+    - '!.husky/**'
+    - '!.s3/**'
+    - '!api-integration-tests/**'
+    - '!bin/**'
+    - '!coverage/**'
+    - '!docs/**'
+    - '!e2e/**'
+    - '!hooks/**'
+    - '!layers/**'
+    - '!migrations/**'
+    - '!resources/**'
+    - '!scripts/**'
+    - '!seed/**'
+    - '!src/**'
+    - '!types/**'
+    # Excluded files
+    - '!.env.*'
+    - '!.eslintignore'
+    - '!.eslintrc'
+    - '!.gitattributes'
+    - '!.gitignore'
+    - '!.lintstagedrc'
+    - '!.npmrc'
+    - '!.nvmrc'
+    - '!.prettierignore'
+    - '!.prettierrc'
+    - '!.whitesource'
+    - '!audit-ci.jsonc'
+    - '!aws_config'
+    - '!aws_credentials'
+    - '!docker-compose.yml'
+    - '!jest.config.js'
+    - '!npm-*.log'
+    - '!ormconfig.ts'
+    - '!README.md'
+    - '!s3-cors.xml'
+    - '!serverless.config.js'
+    - '!serverless.md'
+    - '!sonar-project.properties'
+    - '!tsconfig.json'
+    - '!yarn-*.log'
+    - '!yarn.lock'
+    # Exclude dependencies provided by Lambda Runtime
+    - '!node_modules/aws-sdk/**' # aws-sdk version 2.X.X
+  excludeDevDependencies: true
+  
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-certificate-creator
+  - serverless-domain-manager
+  - serverless-offline
+  - serverless-hooks-plugin
+  - serverless-s3-local
+  - serverless-prune-plugin

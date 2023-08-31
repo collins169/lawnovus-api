@@ -1,0 +1,3 @@
+export enum DATABASE_ERROR {
+  UNIQUE_CONSTRAINT = '23505',
+}

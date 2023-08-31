@@ -128,3 +128,56 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# compiled output
+/dist
+/node_modules
+/junit
+/.docker
+.docker
+/.build
+/.serverless
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/junit
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+/.readme-how-to-get-started
+
+# S3 local files
+# Deprecated old default S3 local directory
+/buckets/
+# New S3 local directory
+# Ignore documents used for E2E tests and seed document data
+/.s3/

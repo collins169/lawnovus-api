@@ -1,0 +1,4 @@
+{
+  "*.{j,t}s{,x,on}": ["eslint --quiet --fix", "prettier --write"],
+  "*.{yml,yaml}": ["prettier --write"]
+}
