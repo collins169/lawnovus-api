@@ -11,6 +11,7 @@ type DatabaseCredentials = {
   port?: number;
   username: string;
   password: string;
+  database?: string;
 };
 
 export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> => {
@@ -29,12 +30,14 @@ export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> =
     `/${process.env.STAGE}/database/lawnovus_db/DATABASE_URL`,
     `/${process.env.STAGE}/database/lawnovus_db/DATABASE_USERNAME`,
     `/${process.env.STAGE}/database/lawnovus_db/DATABASE_PASSWORD`,
+    `/${process.env.STAGE}/database/lawnovus_db/DATABASE_NAME`,
   ]);
 
   return {
     host: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_URL`],
     username: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_USERNAME`],
     password: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_PASSWORD`],
+    database: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_NAME`],
   };
 };
 

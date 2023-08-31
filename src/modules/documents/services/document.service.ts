@@ -11,8 +11,13 @@ import { getAdministratorByUserId } from '../../admin/repositories/administrator
 import { AddDocumentResult } from '../types';
 import { logger } from '../../../common/helpers/logger';
 import { formatFileSize } from '../../../common/helpers/document.helper';
+import { validate as isUUID } from 'uuid';
 
 const s3 = new S3Service(process.env.DOCUMENT_BUCKET_NAME);
+
+export const getS3Instant = () => {
+  return s3;
+};
 
 export const getOneDocument = async (id: string) => {
   const document = await docRepo.getDocumentById(id);
@@ -119,7 +124,7 @@ export const addDocument = async (data: APIGatewayEvent, createdBy: string): Pro
       const { contentType, filename } = rest;
       const ext = filename.split('.').pop();
       const newFileName = `${multipart?.catalog || 'document'}/${uuid()}.${ext}`;
-      const key = `${process.env.STAGE}/${newFileName}`;
+      const key = newFileName;
       const type = mimeType.extension(contentType) || '';
       const size = formatFileSize(content.length);
       await s3.uploadFile(content, key);
@@ -146,3 +151,9 @@ export const addDocument = async (data: APIGatewayEvent, createdBy: string): Pro
   );
   return result;
 };
+
+// export const getDocumentObject = async (param: string) => {
+// 	if(isUUID(param)){
+// 		return await s3.
+// 	}
+// }
