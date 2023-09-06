@@ -17,7 +17,13 @@ const connect = async (connection: DataSource, host: string): Promise<void> => {
 };
 
 export const connectTolawnovusDB = async (): Promise<DataSource> => {
-  const dataSource = new DataSource(await getConnectionOpts());
+  const config = await getConnectionOpts();
+  const dataSource = new DataSource({
+    ...config,
+    extra: {
+      max: 1, // set pool max size
+    },
+  });
   if (!dataSource.isInitialized) {
     await connect(dataSource, (dataSource.options as PostgresConnectionOptions).host);
   }

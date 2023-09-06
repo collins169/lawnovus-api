@@ -7,12 +7,12 @@ custom:
 
   config: ${file(serverless.config.js)}
 
-  # resourcesMap:
-    # vpc: 
-    #   securityGroupIds:
-    #     - ${ssm:/networking/app/SECURITY_GROUP_ID}
-    #   subnetIds: ${ssm:/networking/app/PRIVATE_SUBNET_IDS}
-
+  resourcesMap:
+    vpc: 
+      securityGroupIds:
+        - ${ssm:/networking/app/SECURITY_GROUP_ID}
+      subnetIds: ${ssm:/networking/app/PRIVATE_SUBNET_IDS}
+ 
   serverless-offline:
     httpPort: 4400
     websocketPort: 4501
@@ -87,7 +87,7 @@ functions:
   api:
     timeout: 30
     handler: dist/app.handler
-    # vpc: ${self:custom.resourcesMap.vpc}
+    vpc: ${self:custom.resourcesMap.vpc}
     events:
       - http:
           method: ANY

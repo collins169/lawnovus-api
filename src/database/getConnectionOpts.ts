@@ -14,7 +14,7 @@ type DatabaseCredentials = {
   database?: string;
 };
 
-export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> => {
+export const getLawnovusDBCredentials = async (): Promise<DatabaseCredentials> => {
   if (process.env.STAGE === 'local') {
     return {
       host: 'localhost',
@@ -42,7 +42,7 @@ export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> =
 };
 
 export const getConnectionOpts = async (): Promise<DataSourceOptions> => {
-  const dbCredentials = await getlawnovusDBCredentials();
+  const dbCredentials = await getLawnovusDBCredentials();
 
   const dbPrefix = process.env.STAGE;
 

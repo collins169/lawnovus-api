@@ -8,6 +8,8 @@ type LambdaWrapperOptions = {
   withlawnovusDBConnection?: boolean;
 };
 
+let connected = false;
+
 const defaultOptions: LambdaWrapperOptions = {
   withlawnovusDBConnection: true,
 };
@@ -29,9 +31,10 @@ const updateLambdaContext = (context: Context): Context => {
 const defaultLambdaWrapper = async (context: Context, options?: LambdaWrapperOptions): Promise<Context> => {
   const parsedOptions = getOptions(options);
 
-  if (parsedOptions.withlawnovusDBConnection) {
+  if (parsedOptions.withlawnovusDBConnection && !connected) {
     logger.info('Connecting to Database');
     await connectTolawnovusDB();
+    connected = true;
     logger.info('connected to Database');
   }
 
