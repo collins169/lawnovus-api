@@ -26,6 +26,7 @@ export const runMigrations = async (req: Request, res: Response) => {
   try {
     // reset the migration key for security reasons
     await ssmService.setParameter(MIGRATION_KEY, uuidv4());
+    await dataSource.destroy();
   } catch (e) {
     logger.error(e);
   }

@@ -7,11 +7,14 @@ export const getDocumentRepository = async () => {
 
 export const getDocumentById = async (id: string) => {
   const repository = await getDocumentRepository();
-  return await repository.findOne({
+  const result = await repository.findOne({
     where: {
       id,
     },
   });
+
+  await repository.manager.connection.destroy();
+  return result;
 };
 
 export const getDocuments = async () => {

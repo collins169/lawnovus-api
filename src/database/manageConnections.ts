@@ -5,6 +5,7 @@ import { getConnectionOpts } from './getConnectionOpts';
 
 const connect = async (connection: DataSource, host: string): Promise<void> => {
   try {
+    await connection.destroy();
     await connection.initialize();
   } catch (error) {
     logger.error({

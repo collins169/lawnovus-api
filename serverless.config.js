@@ -5,7 +5,7 @@ const baseDevConfig = {
   apiName: 'local-lawnovus-api',
   domainName: 'NOT_APPLICABLE',
   certificateName: 'NOT_APPLICABLE',
-  hostedZoneIds: 'Z02679983K750MIWB2C9N',
+  hostedZoneIds: 'Z0503788392VLIBN5MG1Y  ',
   numberOfLambdaVersions: 0,
   resources: {},
   serverlessBucketName: 'lawnovus-serverless-deployment-bucket-dev',
@@ -52,7 +52,7 @@ const configMap = {
       executionLoggingEnabled: false,
     },
     dbMigration: {
-      migrationKey: '${ssm:/dev/database/lawnovus_db/MIGRATION_KEY}',
+      migrationKey: '${ssm:/dev/database/MIGRATION_KEY}',
       url: 'https://api.dev.lawnovus.com',
     },
   },
@@ -68,7 +68,7 @@ const configMap = {
       NODE_ENV: 'production',
       FRONT_END_URL: 'https://app.lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/prod/cloudwatch/log/GROUP_NAME}',
-      DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket-prod',
+      DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket',
     },
     serverlessBucketName: 'lawnovus-serverless-deployment-bucket-prod',
     restApi: {
@@ -76,7 +76,7 @@ const configMap = {
       executionLoggingEnabled: false,
     },
     dbMigration: {
-      migrationKey: '${ssm:/prod/database/lawnovus_db/MIGRATION_KEY}',
+      migrationKey: '${ssm:/prod/database/MIGRATION_KEY}',
       url: 'https://api.lawnovus.com',
     },
   },
