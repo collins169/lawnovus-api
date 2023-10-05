@@ -5,8 +5,9 @@ import { getConnectionOpts } from './getConnectionOpts';
 
 const connect = async (connection: DataSource, host: string): Promise<void> => {
   try {
-    await connection.destroy();
+    logger.info('Connecting to Database');
     await connection.initialize();
+    logger.info('connected to Database');
   } catch (error) {
     logger.error({
       action: 'typeorm.connection.connect.error',
@@ -18,13 +19,7 @@ const connect = async (connection: DataSource, host: string): Promise<void> => {
 };
 
 export const connectTolawnovusDB = async (): Promise<DataSource> => {
-  const config = await getConnectionOpts();
-  const dataSource = new DataSource({
-    ...config,
-    extra: {
-      max: 1, // set pool max size
-    },
-  });
+  const dataSource = new DataSource(await getConnectionOpts());
   if (!dataSource.isInitialized) {
     await connect(dataSource, (dataSource.options as PostgresConnectionOptions).host);
   }
