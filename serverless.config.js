@@ -23,6 +23,7 @@ const configMap = {
       DATABASE_USERNAME: 'lawnovus_db',
       DATABASE_PASSWORD: 'lawnovus_db_password',
       FRONT_END_URL: 'http://localhost:3000',
+      WEBSITE_URL: 'http://localhost:3000',
       DOCUMENT_BUCKET_NAME: 'test-bucket',
     },
     restApi: {
@@ -44,6 +45,7 @@ const configMap = {
       ...baseDevConfig.env,
       NODE_ENV: 'development',
       FRONT_END_URL: 'https://app.dev.lawnovus.com',
+      WEBSITE_URL: 'https://dev.lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/dev/cloudwatch/log/GROUP_NAME}',
       DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket',
     },
@@ -67,6 +69,7 @@ const configMap = {
       ...baseDevConfig.env,
       NODE_ENV: 'production',
       FRONT_END_URL: 'https://app.lawnovus.com',
+      WEBSITE_URL: 'https://lawnovus.com',
       CLOUDWATCH_GROUP_NAME: '${ssm:/prod/cloudwatch/log/GROUP_NAME}',
       DOCUMENT_BUCKET_NAME: 'lawnovus-document-storage-bucket',
     },

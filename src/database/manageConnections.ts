@@ -21,6 +21,7 @@ const connect = async (connection: DataSource, host: string): Promise<void> => {
 export const connectTolawnovusDB = async (): Promise<DataSource> => {
   const dataSource = new DataSource(await getConnectionOpts());
   if (!dataSource.isInitialized) {
+    logger.info('reconnecting to database');
     await connect(dataSource, (dataSource.options as PostgresConnectionOptions).host);
   }
   return dataSource;

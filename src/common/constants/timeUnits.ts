@@ -33,6 +33,8 @@ export const FIVE_MINUTES = ONE_MINUTE * FIVE;
 
 export const TEN_MINUTES = ONE_MINUTE * TEN;
 
+export const TWENTY_MINUTES = TWO_MINUTES * TEN;
+
 export const THIRTY_MINUTES = ONE_MINUTE * (THREE * TEN);
 
 export const THREE_HUNDRED_MS = HUNDRED_MS * THREE;
