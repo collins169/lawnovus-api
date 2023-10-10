@@ -5,7 +5,7 @@ const baseDevConfig = {
   apiName: 'local-lawnovus-api',
   domainName: 'NOT_APPLICABLE',
   certificateName: 'NOT_APPLICABLE',
-  hostedZoneIds: 'Z0503788392VLIBN5MG1Y  ',
+  hostedZoneIds: 'Z0503788392VLIBN5MG1Y',
   numberOfLambdaVersions: 0,
   resources: {},
   serverlessBucketName: 'lawnovus-serverless-deployment-bucket-dev',

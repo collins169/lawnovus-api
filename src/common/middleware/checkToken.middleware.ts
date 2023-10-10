@@ -5,7 +5,7 @@ import { validateToken } from '../../modules/auth/services/auth.service';
 export const JWTTokenHandler = async (req: Request, _res: Response, next: NextFunction) => {
   const { authorization, origin } = req.headers;
 
-  if (origin === process.env.WEBSITE_URL) {
+  if ([process.env.WEBSITE_URL, 'http://localhost:3000'].includes(origin)) {
     req['user'] = { username: 'website', id: 'website-id', role: 'ADMIN' };
     return next();
   }
