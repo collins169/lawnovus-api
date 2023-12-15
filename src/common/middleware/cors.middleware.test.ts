@@ -10,6 +10,7 @@ describe('specifyCors', () => {
   beforeEach(() => {
     process.env.NODE_ENV = 'local';
     process.env.FRONT_END_URL = 'http://app.dev.lawnovus.com';
+    process.env.WEBSITE_URL = 'http://dev.lawnovus.com';
   });
   afterEach(() => {
     process.env = cloneDeep(oldEnv);
@@ -21,22 +22,33 @@ describe('specifyCors', () => {
     specifyCors();
     expect(cors).toHaveBeenCalledWith(
       expect.objectContaining({
-        origin: ['http://app.dev.lawnovus.com', 'http://localhost:3000', 'http://localhost:3001'],
+        origin: [
+          'http://app.dev.lawnovus.com',
+          'http://dev.lawnovus.com',
+          'http://localhost:3000',
+          'http://localhost:3001',
+        ],
       }),
     );
   });
   it('only allows connections from the specified FRONT_END_URL in prod', () => {
     process.env.NODE_ENV = 'production';
     process.env.FRONT_END_URL = 'http://app.lawnovus.com';
+    process.env.WEBSITE_URL = 'http://lawnovus.com';
     specifyCors();
     expect(cors).toHaveBeenCalledWith(
       expect.objectContaining({
-        origin: ['http://app.lawnovus.com'],
+        origin: ['http://app.lawnovus.com', 'http://lawnovus.com'],
       }),
     );
     expect(cors).not.toHaveBeenCalledWith(
       expect.objectContaining({
-        origin: ['http://app.dev.lawnovus.com', 'http://localhost:3000', 'http://localhost:3001'],
+        origin: [
+          'http://app.dev.lawnovus.com',
+          'http://dev.lawnovus.com',
+          'http://localhost:3000',
+          'http://localhost:3001',
+        ],
       }),
     );
   });

@@ -1,15 +1,15 @@
 import { NotFoundException } from '@nestjs/common';
-import * as articleRepo from '../repositories/article.repository';
-import { Article } from '../entities/article';
-import { CreateArticleInput } from '../dto/create-article.input';
+import * as articleRepo from '../repositories/case-study.repository';
+import { CaseStudy } from '../entities/case-studies';
+import { CreateCaseStudyInput } from '../dto/create-case-study.input';
 import { getOneDocument, getS3Instant } from '../../../documents/services/document.service';
 import { getOneCategoryById } from '../../categories/services/category.service';
 import { getAdministratorByUserId } from '../../../admin/repositories/administrator.repository';
 import { TEN_MINUTES } from '../../../../common/constants/timeUnits';
 
-export const getAllArticles = async () => {
-  const articles = await articleRepo.getArticles();
-  const mappedArticles = await Promise.all(
+export const getAllCaseStudies = async () => {
+  const articles = await articleRepo.getCaseStudies();
+  const mappedCaseStudies = await Promise.all(
     articles.map(async (article) => {
       const [coverImageUrl, fileUrl] = await Promise.all([
         getS3Instant().getObjectPresignedUrl(article?.coverImage?.key, TEN_MINUTES),
@@ -28,11 +28,11 @@ export const getAllArticles = async () => {
       };
     }),
   );
-  return mappedArticles;
+  return mappedCaseStudies;
 };
 
-export const getOneArticleById = async (id: string) => {
-  const article: Article = await articleRepo.getArticleById(id);
+export const getOneCaseStudyById = async (id: string) => {
+  const article: CaseStudy = await articleRepo.getCaseStudyById(id);
   if (!article) {
     throw new NotFoundException('this article does not exist');
   }
@@ -53,14 +53,17 @@ export const getOneArticleById = async (id: string) => {
   };
 };
 
-export const createArticle = async ({ coverImage, file, type, ...input }: CreateArticleInput, createdBy: string) => {
+export const createCaseStudy = async (
+  { coverImage, file, type, ...input }: CreateCaseStudyInput,
+  createdBy: string,
+) => {
   const [coverImg, articleFile, category] = await Promise.all([
     getOneDocument(coverImage),
     getOneDocument(file),
     getOneCategoryById(type),
   ]);
   const admin = await getAdministratorByUserId(createdBy);
-  await articleRepo.saveArticle({
+  await articleRepo.saveCaseStudy({
     ...input,
     file: articleFile,
     type: category,
@@ -69,22 +72,22 @@ export const createArticle = async ({ coverImage, file, type, ...input }: Create
   });
 };
 
-export const updateArticle = async (
+export const updateCaseStudy = async (
   id: string,
-  { coverImage, file, type, ...input }: Partial<CreateArticleInput>,
+  { coverImage, file, type, ...input }: Partial<CreateCaseStudyInput>,
   updatedBy: string,
 ) => {
   const [coverImg, articleFile, category, article] = await Promise.all([
     getOneDocument(coverImage),
     getOneDocument(file),
     getOneCategoryById(type),
-    articleRepo.getArticleById(id),
+    articleRepo.getCaseStudyById(id),
   ]);
   if (!article) {
     throw new NotFoundException('this article does not exist');
   }
   const admin = await getAdministratorByUserId(updatedBy);
-  await articleRepo.updateArticle({
+  await articleRepo.updateCaseStudy({
     old: article,
     input: {
       ...input,
@@ -96,11 +99,11 @@ export const updateArticle = async (
   });
 };
 
-export const deleteArticle = async (id: string) => {
-  const article: Article = await articleRepo.getArticleById(id);
+export const deleteCaseStudy = async (id: string) => {
+  const article: CaseStudy = await articleRepo.getCaseStudyById(id);
   if (!article) {
     throw new NotFoundException('this article does not exist');
   }
 
-  await articleRepo.deleteArticle(id);
+  await articleRepo.deleteCaseStudy(id);
 };

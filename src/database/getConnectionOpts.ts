@@ -11,9 +11,10 @@ type DatabaseCredentials = {
   port?: number;
   username: string;
   password: string;
+  database?: string;
 };
 
-export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> => {
+export const getLawnovusDBCredentials = async (): Promise<DatabaseCredentials> => {
   if (process.env.STAGE === 'local') {
     return {
       host: 'localhost',
@@ -26,20 +27,22 @@ export const getlawnovusDBCredentials = async (): Promise<DatabaseCredentials> =
   const ssmService = new SSMService();
 
   const databaseVariables = await ssmService.getParameters([
-    `/${process.env.STAGE}/database/lawnovus_db/DATABASE_URL`,
-    `/${process.env.STAGE}/database/lawnovus_db/DATABASE_USERNAME`,
-    `/${process.env.STAGE}/database/lawnovus_db/DATABASE_PASSWORD`,
+    `/${process.env.STAGE}/database/DATABASE_URL`,
+    `/${process.env.STAGE}/database/DATABASE_USERNAME`,
+    `/${process.env.STAGE}/database/DATABASE_PASSWORD`,
+    `/${process.env.STAGE}/database/DATABASE_NAME`,
   ]);
 
   return {
-    host: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_URL`],
-    username: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_USERNAME`],
-    password: databaseVariables[`/${process.env.STAGE}/database/lawnovus_db/DATABASE_PASSWORD`],
+    host: databaseVariables[`/${process.env.STAGE}/database/DATABASE_URL`],
+    username: databaseVariables[`/${process.env.STAGE}/database/DATABASE_USERNAME`],
+    password: databaseVariables[`/${process.env.STAGE}/database/DATABASE_PASSWORD`],
+    database: databaseVariables[`/${process.env.STAGE}/database/DATABASE_NAME`],
   };
 };
 
 export const getConnectionOpts = async (): Promise<DataSourceOptions> => {
-  const dbCredentials = await getlawnovusDBCredentials();
+  const dbCredentials = await getLawnovusDBCredentials();
 
   const dbPrefix = process.env.STAGE;
 

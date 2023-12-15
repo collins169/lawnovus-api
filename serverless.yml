@@ -12,7 +12,7 @@ custom:
       securityGroupIds:
         - ${ssm:/networking/app/SECURITY_GROUP_ID}
       subnetIds: ${ssm:/networking/app/PRIVATE_SUBNET_IDS}
-
+ 
   serverless-offline:
     httpPort: 4400
     websocketPort: 4501

@@ -11,6 +11,7 @@ import { subscriberRoutes } from './modules/subscriber/subscriber.routes';
 import { JWTTokenHandler } from './common/middleware/checkToken.middleware';
 import { documentRoutes } from './modules/documents/document.routes';
 import { catalogRoutes } from './modules/catalogs/catalog.routes';
+import { searchRoutes } from './modules/search/search.routes';
 
 export const expressAPI = (): express.Application => {
   const api = express();
@@ -24,6 +25,7 @@ export const expressAPI = (): express.Application => {
   api.use('/deploy', deployMigrationRoute);
 
   api.use('/auth', authRoutes);
+  api.use('/search', searchRoutes);
 
   api.use(JWTTokenHandler);
   api.use('/admin', adminRoutes);

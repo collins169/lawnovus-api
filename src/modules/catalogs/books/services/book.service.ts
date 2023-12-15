@@ -2,20 +2,18 @@ import { NotFoundException } from '@nestjs/common';
 import * as bookRepo from '../repositories/book.repository';
 import { Book } from '../entities/book';
 import { CreateBookInput } from '../dto/create-book.input';
-import { getOneDocument } from '../../../documents/services/document.service';
+import { getOneDocument, getS3Instant } from '../../../documents/services/document.service';
 import { getOneCategoryById } from '../../categories/services/category.service';
 import { getAdministratorByUserId } from '../../../admin/repositories/administrator.repository';
-import { S3Service } from '../../../../common/service/s3.service';
 import { TEN_MINUTES } from '../../../../common/constants/timeUnits';
-const s3 = new S3Service(process.env.DOCUMENT_BUCKET_NAME);
 
 export const getAllBooks = async () => {
   const books = await bookRepo.getBooks();
   const mappedBooks = await Promise.all(
     books.map(async (book) => {
       const [coverImageUrl, fileUrl] = await Promise.all([
-        s3.getObjectPresignedUrl(book?.coverImage?.key, TEN_MINUTES),
-        s3.getObjectPresignedUrl(book?.file?.key, TEN_MINUTES),
+        getS3Instant().getObjectPresignedUrl(book?.coverImage?.key, TEN_MINUTES),
+        getS3Instant().getObjectPresignedUrl(book?.file?.key, TEN_MINUTES),
       ]);
       return {
         ...book,
@@ -39,8 +37,8 @@ export const getOneBookById = async (id: string) => {
     throw new NotFoundException('this book does not exist');
   }
   const [coverImageUrl, fileUrl] = await Promise.all([
-    s3.getObjectPresignedUrl(book?.coverImage?.key, TEN_MINUTES),
-    s3.getObjectPresignedUrl(book?.file?.key, TEN_MINUTES),
+    getS3Instant().getObjectPresignedUrl(book?.coverImage?.key, TEN_MINUTES),
+    getS3Instant().getObjectPresignedUrl(book?.file?.key, TEN_MINUTES),
   ]);
   return {
     ...book,

@@ -1,3 +1,4 @@
+import { In } from 'typeorm';
 import { getEntityRepository } from '../../../database/getEntityRepository';
 import { Document } from '../entities/document.entity';
 
@@ -7,11 +8,26 @@ export const getDocumentRepository = async () => {
 
 export const getDocumentById = async (id: string) => {
   const repository = await getDocumentRepository();
-  return await repository.findOne({
+  const result = await repository.findOne({
     where: {
       id,
     },
   });
+
+  await repository.manager.connection.destroy();
+  return result;
+};
+
+export const getDocumentsByIds = async (ids: Array<string>) => {
+  const repository = await getDocumentRepository();
+  const result = await repository.find({
+    where: {
+      id: In([...ids]),
+    },
+  });
+
+  await repository.manager.connection.destroy();
+  return result;
 };
 
 export const getDocuments = async () => {

@@ -1,3 +1,4 @@
+import { In } from 'typeorm';
 import { getEntityRepository } from '../../../../database/getEntityRepository';
 import { CategoryTypeEnum } from '../../types';
 import { Category } from '../entities/category';
@@ -22,6 +23,15 @@ export const getCategoryById = async (id: string) => {
   return await repository.findOne({
     where: {
       id,
+    },
+  });
+};
+
+export const getCategoriesByIds = async (ids: Array<string>) => {
+  const repository = await getCategoryRepository();
+  return await repository.find({
+    where: {
+      id: In([...ids]),
     },
   });
 };

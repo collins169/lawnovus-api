@@ -29,11 +29,11 @@ const updateLambdaContext = (context: Context): Context => {
 const defaultLambdaWrapper = async (context: Context, options?: LambdaWrapperOptions): Promise<Context> => {
   const parsedOptions = getOptions(options);
 
-  if (parsedOptions.withlawnovusDBConnection) {
-    logger.info('Connecting to Database');
-    await connectTolawnovusDB();
-    logger.info('connected to Database');
-  }
+  // if (parsedOptions.withlawnovusDBConnection) {
+  //   logger.info('Connecting to Database');
+  //   await connectTolawnovusDB();
+  //   logger.info('connected to Database');
+  // }
 
   return updateLambdaContext(context);
 };
