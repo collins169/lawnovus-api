@@ -12,7 +12,7 @@ export class CaseStudy extends BaseModelWithCreatedBy {
 
   @OneToOne(() => Document)
   @JoinColumn()
-  coverImage: Document;
+  coverImage?: Document;
 
   @Column({ type: 'text' })
   summary: string;
@@ -21,8 +21,8 @@ export class CaseStudy extends BaseModelWithCreatedBy {
   @JoinColumn()
   type: Category;
 
-  @Column({ length: columnSize.regular_64, nullable: true })
-  judge?: string;
+  @Column('text', { array: true, default: [] })
+  judge?: Array<string>;
 
   @Column('text', { array: true, default: [] })
   lawyers?: Array<string>;
