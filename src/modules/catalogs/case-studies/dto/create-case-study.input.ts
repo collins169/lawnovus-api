@@ -4,7 +4,7 @@ export class CreateCaseStudyInput {
   @IsNotEmpty({ message: 'Article title is required' })
   title: string;
 
-  @IsUUID()
+  @IsString()
   coverImage?: string;
 
   @IsString()
@@ -16,7 +16,7 @@ export class CreateCaseStudyInput {
   type: string;
 
   @IsArray()
-  judge: Array<string>;
+  judges?: Array<string>;
 
   @IsArray()
   lawyers?: Array<string>;
@@ -33,7 +33,7 @@ export class CreateCaseStudyInput {
   file: string;
 
   @IsString()
-  language: string;
+  language?: string;
 
   @IsNumber()
   isbn: number;
