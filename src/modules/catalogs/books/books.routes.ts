@@ -15,7 +15,7 @@ const router: express.Router = express.Router();
 router.get('/', handleAsyncErrors(getAllBooksCtrl));
 router.get('/:id', handleAsyncErrors(getOneBookCtrl));
 router.post('/', validateBody(CreateBookInput), handleAsyncErrors(createBookCtrl));
-router.patch('/', validateBody(CreateBookInput), handleAsyncErrors(updateBookCtrl));
+router.patch('/:id', validateBody(CreateBookInput), handleAsyncErrors(updateBookCtrl));
 router.delete('/:id', handleAsyncErrors(deleteBookCtrl));
 
 export const bookRoutes = router;

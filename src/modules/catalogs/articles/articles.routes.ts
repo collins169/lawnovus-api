@@ -15,7 +15,7 @@ const router: express.Router = express.Router();
 router.get('/', handleAsyncErrors(getAllArticlesCtrl));
 router.get('/:id', handleAsyncErrors(getOneArticleCtrl));
 router.post('/', validateBody(CreateArticleInput), handleAsyncErrors(createArticleCtrl));
-router.patch('/', validateBody(CreateArticleInput), handleAsyncErrors(updateArticleCtrl));
+router.patch('/:id', validateBody(CreateArticleInput), handleAsyncErrors(updateArticleCtrl));
 router.delete('/:id', handleAsyncErrors(deleteArticleCtrl));
 
 export const articleRoutes = router;

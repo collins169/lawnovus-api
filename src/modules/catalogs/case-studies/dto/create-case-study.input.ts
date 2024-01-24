@@ -1,18 +1,18 @@
 import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
 export class CreateCaseStudyInput {
   @IsString()
-  @IsNotEmpty({ message: 'Article title is required' })
+  @IsNotEmpty({ message: 'Case title is required' })
   title: string;
 
   @IsString()
   coverImage?: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Article summary is required' })
+  @IsNotEmpty({ message: 'Case summary is required' })
   summary: string;
 
   @IsUUID()
-  @IsNotEmpty({ message: 'Article type is required' })
+  @IsNotEmpty({ message: 'Case type is required' })
   type: string;
 
   @IsArray()
@@ -25,7 +25,7 @@ export class CreateCaseStudyInput {
   court: string;
 
   @IsDate()
-  @IsNotEmpty({ message: 'Article publication date is required' })
+  @IsNotEmpty({ message: 'Case publication date is required' })
   publicationDate: Date;
 
   @IsUUID()
