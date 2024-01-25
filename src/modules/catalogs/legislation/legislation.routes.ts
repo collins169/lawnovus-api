@@ -18,4 +18,4 @@ router.post('/', validateBody(CreateLegislationInput), handleAsyncErrors(createL
 router.patch('/:id', validateBody(CreateLegislationInput), handleAsyncErrors(updateLegislationCtrl));
 router.delete('/:id', handleAsyncErrors(deleteLegislationCtrl));
 
-export const caseStudyRoutes = router;
+export const legislationRoutes = router;
