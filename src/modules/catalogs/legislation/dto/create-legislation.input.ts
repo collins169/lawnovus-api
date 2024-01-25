@@ -26,6 +26,8 @@ export class CreateLegislationInput {
   @IsNotEmpty({ message: 'File is required' })
   file: string;
 
+  keywords?: string;
+
   @IsBoolean()
   status: boolean;
 }

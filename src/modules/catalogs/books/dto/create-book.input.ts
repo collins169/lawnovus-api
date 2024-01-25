@@ -37,6 +37,8 @@ export class CreateBookInput {
   @IsNumber()
   isbn: number;
 
+  keyWords?: string;
+
   @IsNumber()
   pages: number;
 }

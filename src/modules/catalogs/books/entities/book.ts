@@ -46,6 +46,9 @@ export class Book extends BaseModelWithCreatedBy {
   @Column({ default: true, nullable: true })
   isActive?: boolean;
 
+  @Column({ length: columnSize.regular_64, nullable: true })
+  keyWords?: string;
+
   @Column({ type: 'json', nullable: true })
   metaData?: Record<string, unknown>;
 }

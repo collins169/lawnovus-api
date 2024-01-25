@@ -18,9 +18,6 @@ export class CreateCaseStudyInput {
   @IsArray()
   judges?: Array<string>;
 
-  @IsArray()
-  lawyers?: Array<string>;
-
   @IsString()
   court: string;
 
@@ -37,6 +34,8 @@ export class CreateCaseStudyInput {
 
   @IsNumber()
   isbn: number;
+
+  keyWords?: string;
 
   @IsNumber()
   pages: number;
