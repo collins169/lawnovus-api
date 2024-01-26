@@ -61,11 +61,11 @@ describe('specifyCors', () => {
       }),
     );
   });
-  it('only allows Authorization and Content-Type headers', () => {
+  it('only allows Authorization, Content-Type and X-Client-Id headers', () => {
     specifyCors();
     expect(cors).toHaveBeenCalledWith(
       expect.objectContaining({
-        allowedHeaders: ['Authorization', 'Content-Type'],
+        allowedHeaders: ['Authorization', 'Content-Type', 'x-client-id'],
       }),
     );
   });
