@@ -57,12 +57,15 @@ export const createCaseStudy = async (
   { coverImage, file, type, ...input }: CreateCaseStudyInput,
   createdBy: string,
 ) => {
-  const [coverImg, caseStudyFile, category] = await Promise.all([
-    getOneDocument(coverImage),
+  let coverImg = null;
+  const [caseStudyFile, category, admin] = await Promise.all([
     getOneDocument(file),
     getOneCategoryById(type),
+    getAdministratorByUserId(createdBy),
   ]);
-  const admin = await getAdministratorByUserId(createdBy);
+  if (coverImage) {
+    coverImg = await getOneDocument(coverImage);
+  }
   await caseStudyRepo.saveCaseStudy({
     ...input,
     file: caseStudyFile,

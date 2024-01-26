@@ -35,6 +35,7 @@ export class CreateCaseStudyInput {
   @IsNumber()
   isbn: number;
 
+  @IsString()
   keyWords?: string;
 
   @IsNumber()

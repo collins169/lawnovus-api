@@ -57,12 +57,16 @@ export const createLegislation = async (
   { coverImage, file, type, ...input }: CreateLegislationInput,
   createdBy: string,
 ) => {
-  const [coverImg, legislationFile, category] = await Promise.all([
-    getOneDocument(coverImage),
+  let coverImg = null;
+  const [legislationFile, category, admin] = await Promise.all([
     getOneDocument(file),
     getOneCategoryById(type),
+    getAdministratorByUserId(createdBy),
   ]);
-  const admin = await getAdministratorByUserId(createdBy);
+  if (coverImage) {
+    coverImg = getOneDocument(coverImage);
+  }
+
   await legislationRepo.saveLegislation({
     ...input,
     file: legislationFile,
@@ -77,12 +81,15 @@ export const updateLegislation = async (
   { coverImage, file, type, ...input }: Partial<CreateLegislationInput>,
   updatedBy: string,
 ) => {
-  const [coverImg, legislationFile, category, legislation] = await Promise.all([
-    getOneDocument(coverImage),
+  let coverImg = null;
+  const [legislationFile, category, legislation] = await Promise.all([
     getOneDocument(file),
     getOneCategoryById(type),
     legislationRepo.getLegislationById(id),
   ]);
+  if (coverImage) {
+    coverImg = await getOneDocument(coverImage);
+  }
   if (!legislation) {
     throw new NotFoundException('this legislation does not exist');
   }

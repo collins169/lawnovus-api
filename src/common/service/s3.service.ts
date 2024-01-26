@@ -80,12 +80,15 @@ export class S3Service {
 
   public async getObjectPresignedUrl(s3Key: string, expiry: number): Promise<string> {
     try {
-      if (process.env.STAGE === 'local') {
-        const command = new GetObjectCommand({ Bucket: this.bucketName, Key: s3Key });
-        const url = await getSignedUrl(this.s3, command, { expiresIn: expiry }); // expires in seconds
-        return url;
+      if (s3Key) {
+        if (process.env.STAGE === 'local') {
+          const command = new GetObjectCommand({ Bucket: this.bucketName, Key: s3Key });
+          const url = await getSignedUrl(this.s3, command, { expiresIn: expiry }); // expires in seconds
+          return url;
+        }
+        return `${process.env.DOCUMENT_URL}/${s3Key}`;
       }
-      return `${process.env.DOCUMENT_URL}/${s3Key}`;
+      return '';
     } catch (e) {
       logger.error('Failed getting presigned URL for object', e);
       throw e;

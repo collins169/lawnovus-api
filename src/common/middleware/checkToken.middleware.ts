@@ -3,9 +3,9 @@ import { UnauthorizedException } from '@nestjs/common';
 import { validateToken } from '../../modules/auth/services/auth.service';
 
 export const JWTTokenHandler = async (req: Request, _res: Response, next: NextFunction) => {
-  const { authorization, origin } = req.headers;
+  const { authorization, origin, 'x-client-id': clientId } = req.headers;
 
-  if ([process.env.WEBSITE_URL, 'http://localhost:3000'].includes(origin) && !authorization) {
+  if ([process.env.WEBSITE_URL, 'http://localhost:3000'].includes(origin) && clientId === 'WEBSITE' && !authorization) {
     req['user'] = { username: 'website', id: 'website-id', role: 'ADMIN' };
     return next();
   }
