@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import * as caseStudyRepo from '../repositories/case-study.repository';
-import { CaseStudy } from '../entities/case-studies';
+import { CaseStudy } from '../entities/case-studies.entity';
 import { CreateCaseStudyInput } from '../dto/create-case-study.input';
 import { getOneDocument, getS3Instant } from '../../../documents/services/document.service';
 import { getOneCategoryById } from '../../categories/services/category.service';
