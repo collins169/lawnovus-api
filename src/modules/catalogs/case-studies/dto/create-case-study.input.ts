@@ -1,35 +1,28 @@
-import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { AuthorInput } from '../../common/dto/author.input';
-
+import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
 export class CreateCaseStudyInput {
   @IsString()
-  @IsNotEmpty({ message: 'Article title is required' })
+  @IsNotEmpty({ message: 'Case title is required' })
   title: string;
 
-  @IsUUID()
-  @IsNotEmpty({ message: 'Cover image is required' })
-  coverImage: string;
+  @IsString()
+  coverImage?: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Article summary is required' })
+  @IsNotEmpty({ message: 'Case summary is required' })
   summary: string;
 
   @IsUUID()
-  @IsNotEmpty({ message: 'Article type is required' })
+  @IsNotEmpty({ message: 'Case type is required' })
   type: string;
 
-  @IsString()
-  judge: string;
-
   @IsArray()
-  lawyers?: Array<string>;
+  judges?: Array<string>;
 
   @IsString()
   court: string;
 
   @IsDate()
-  @IsNotEmpty({ message: 'Article publication date is required' })
+  @IsNotEmpty({ message: 'Case publication date is required' })
   publicationDate: Date;
 
   @IsUUID()
@@ -37,10 +30,13 @@ export class CreateCaseStudyInput {
   file: string;
 
   @IsString()
-  language: string;
+  language?: string;
 
   @IsNumber()
   isbn: number;
+
+  @IsString()
+  keyWords?: string;
 
   @IsNumber()
   pages: number;

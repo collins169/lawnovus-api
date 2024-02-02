@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import * as bookRepo from '../repositories/book.repository';
-import { Book } from '../entities/book';
+import { Book } from '../entities/book.entity';
 import { CreateBookInput } from '../dto/create-book.input';
 import { getOneDocument, getS3Instant } from '../../../documents/services/document.service';
 import { getOneCategoryById } from '../../categories/services/category.service';

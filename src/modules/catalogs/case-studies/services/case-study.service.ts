@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
-import * as articleRepo from '../repositories/case-study.repository';
-import { CaseStudy } from '../entities/case-studies';
+import * as caseStudyRepo from '../repositories/case-study.repository';
+import { CaseStudy } from '../entities/case-studies.entity';
 import { CreateCaseStudyInput } from '../dto/create-case-study.input';
 import { getOneDocument, getS3Instant } from '../../../documents/services/document.service';
 import { getOneCategoryById } from '../../categories/services/category.service';
@@ -8,21 +8,21 @@ import { getAdministratorByUserId } from '../../../admin/repositories/administra
 import { TEN_MINUTES } from '../../../../common/constants/timeUnits';
 
 export const getAllCaseStudies = async () => {
-  const articles = await articleRepo.getCaseStudies();
+  const caseStudies = await caseStudyRepo.getCaseStudies();
   const mappedCaseStudies = await Promise.all(
-    articles.map(async (article) => {
+    caseStudies.map(async (caseStudy) => {
       const [coverImageUrl, fileUrl] = await Promise.all([
-        getS3Instant().getObjectPresignedUrl(article?.coverImage?.key, TEN_MINUTES),
-        getS3Instant().getObjectPresignedUrl(article?.file?.key, TEN_MINUTES),
+        getS3Instant().getObjectPresignedUrl(caseStudy?.coverImage?.key, TEN_MINUTES),
+        getS3Instant().getObjectPresignedUrl(caseStudy?.file?.key, TEN_MINUTES),
       ]);
       return {
-        ...article,
+        ...caseStudy,
         file: {
-          ...article?.file,
+          ...caseStudy?.file,
           url: fileUrl,
         },
         coverImage: {
-          ...article?.coverImage,
+          ...caseStudy?.coverImage,
           url: coverImageUrl,
         },
       };
@@ -32,22 +32,22 @@ export const getAllCaseStudies = async () => {
 };
 
 export const getOneCaseStudyById = async (id: string) => {
-  const article: CaseStudy = await articleRepo.getCaseStudyById(id);
-  if (!article) {
-    throw new NotFoundException('this article does not exist');
+  const caseStudy: CaseStudy = await caseStudyRepo.getCaseStudyById(id);
+  if (!caseStudy) {
+    throw new NotFoundException('this caseStudy does not exist');
   }
   const [coverImageUrl, fileUrl] = await Promise.all([
-    getS3Instant().getObjectPresignedUrl(article?.coverImage?.key, TEN_MINUTES),
-    getS3Instant().getObjectPresignedUrl(article?.file?.key, TEN_MINUTES),
+    getS3Instant().getObjectPresignedUrl(caseStudy?.coverImage?.key, TEN_MINUTES),
+    getS3Instant().getObjectPresignedUrl(caseStudy?.file?.key, TEN_MINUTES),
   ]);
   return {
-    ...article,
+    ...caseStudy,
     file: {
-      ...article?.file,
+      ...caseStudy?.file,
       url: fileUrl,
     },
     coverImage: {
-      ...article?.coverImage,
+      ...caseStudy?.coverImage,
       url: coverImageUrl,
     },
   };
@@ -57,15 +57,18 @@ export const createCaseStudy = async (
   { coverImage, file, type, ...input }: CreateCaseStudyInput,
   createdBy: string,
 ) => {
-  const [coverImg, articleFile, category] = await Promise.all([
-    getOneDocument(coverImage),
+  let coverImg = null;
+  const [caseStudyFile, category, admin] = await Promise.all([
     getOneDocument(file),
     getOneCategoryById(type),
+    getAdministratorByUserId(createdBy),
   ]);
-  const admin = await getAdministratorByUserId(createdBy);
-  await articleRepo.saveCaseStudy({
+  if (coverImage) {
+    coverImg = await getOneDocument(coverImage);
+  }
+  await caseStudyRepo.saveCaseStudy({
     ...input,
-    file: articleFile,
+    file: caseStudyFile,
     type: category,
     coverImage: coverImg,
     createdBy: admin,
@@ -77,21 +80,21 @@ export const updateCaseStudy = async (
   { coverImage, file, type, ...input }: Partial<CreateCaseStudyInput>,
   updatedBy: string,
 ) => {
-  const [coverImg, articleFile, category, article] = await Promise.all([
+  const [coverImg, caseStudyFile, category, caseStudy] = await Promise.all([
     getOneDocument(coverImage),
     getOneDocument(file),
     getOneCategoryById(type),
-    articleRepo.getCaseStudyById(id),
+    caseStudyRepo.getCaseStudyById(id),
   ]);
-  if (!article) {
-    throw new NotFoundException('this article does not exist');
+  if (!caseStudy) {
+    throw new NotFoundException('this caseStudy does not exist');
   }
   const admin = await getAdministratorByUserId(updatedBy);
-  await articleRepo.updateCaseStudy({
-    old: article,
+  await caseStudyRepo.updateCaseStudy({
+    old: caseStudy,
     input: {
       ...input,
-      file: articleFile,
+      file: caseStudyFile,
       type: category,
       coverImage: coverImg,
       updatedBy: admin,
@@ -100,10 +103,10 @@ export const updateCaseStudy = async (
 };
 
 export const deleteCaseStudy = async (id: string) => {
-  const article: CaseStudy = await articleRepo.getCaseStudyById(id);
-  if (!article) {
-    throw new NotFoundException('this article does not exist');
+  const caseStudy: CaseStudy = await caseStudyRepo.getCaseStudyById(id);
+  if (!caseStudy) {
+    throw new NotFoundException('this caseStudy does not exist');
   }
 
-  await articleRepo.deleteCaseStudy(id);
+  await caseStudyRepo.deleteCaseStudy(id);
 };

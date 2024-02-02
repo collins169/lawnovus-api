@@ -5,14 +5,14 @@ import { Author } from '../../types';
 import { Document } from '../../../documents/entities/document.entity';
 import { Category } from '../../categories/entities/category';
 
-@Entity('books')
-export class Book extends BaseModelWithCreatedBy {
-  @Column({ length: columnSize.regular_64, nullable: false, unique: true })
+@Entity('case-studies')
+export class CaseStudy extends BaseModelWithCreatedBy {
+  @Column({ length: columnSize.large_512, nullable: false, unique: true })
   title: string;
 
   @OneToOne(() => Document)
   @JoinColumn()
-  coverImage: Document;
+  coverImage?: Document;
 
   @Column({ type: 'text' })
   summary: string;
@@ -21,8 +21,11 @@ export class Book extends BaseModelWithCreatedBy {
   @JoinColumn()
   type: Category;
 
-  @Column({ type: 'json', nullable: true })
-  author?: Author;
+  @Column('text', { array: true, default: [] })
+  judges?: Array<string>;
+
+  @Column({ length: columnSize.regular_64, nullable: true })
+  court?: string;
 
   @Column({ type: 'timestamp with time zone' })
   publicationDate: Date;
@@ -30,9 +33,6 @@ export class Book extends BaseModelWithCreatedBy {
   @OneToOne(() => Document)
   @JoinColumn()
   file: Document;
-
-  @Column({ length: columnSize.regular_64, nullable: true })
-  language?: string;
 
   @Column({ default: 0, nullable: true })
   isbn?: number;
@@ -45,6 +45,9 @@ export class Book extends BaseModelWithCreatedBy {
 
   @Column({ default: true, nullable: true })
   isActive?: boolean;
+
+  @Column({ length: columnSize.large_512, nullable: true })
+  keyWords?: string;
 
   @Column({ type: 'json', nullable: true })
   metaData?: Record<string, unknown>;

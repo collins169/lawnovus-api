@@ -39,4 +39,7 @@ export class CreateArticleInput {
 
   @IsNumber()
   pages: number;
+
+  @IsString()
+  keyWords?: string;
 }

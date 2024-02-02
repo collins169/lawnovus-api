@@ -14,7 +14,7 @@ export function specifyCors() {
   return cors({
     origin: allowedOrigins,
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Authorization', 'Content-Type'],
+    allowedHeaders: ['Authorization', 'Content-Type', 'x-client-id'],
     maxAge: TWO_HOURS_IN_SECONDS,
   });
 }

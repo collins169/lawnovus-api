@@ -5,14 +5,14 @@ import { Author } from '../../types';
 import { Document } from '../../../documents/entities/document.entity';
 import { Category } from '../../categories/entities/category';
 
-@Entity('case-studies')
-export class CaseStudy extends BaseModelWithCreatedBy {
-  @Column({ length: columnSize.regular_64, nullable: false, unique: true })
+@Entity('legislation')
+export class Legislation extends BaseModelWithCreatedBy {
+  @Column({ length: columnSize.large_512, nullable: false, unique: true })
   title: string;
 
   @OneToOne(() => Document)
   @JoinColumn()
-  coverImage: Document;
+  coverImage?: Document;
 
   @Column({ type: 'text' })
   summary: string;
@@ -22,13 +22,7 @@ export class CaseStudy extends BaseModelWithCreatedBy {
   type: Category;
 
   @Column({ length: columnSize.regular_64, nullable: true })
-  judge?: string;
-
-  @Column('text', { array: true, default: [] })
-  lawyers?: Array<string>;
-
-  @Column({ length: columnSize.regular_64, nullable: true })
-  court?: string;
+  jurisdiction?: string;
 
   @Column({ type: 'timestamp with time zone' })
   publicationDate: Date;
@@ -37,20 +31,11 @@ export class CaseStudy extends BaseModelWithCreatedBy {
   @JoinColumn()
   file: Document;
 
-  @Column({ length: columnSize.regular_64, nullable: true })
-  language?: string;
-
-  @Column({ default: 0, nullable: true })
-  isbn?: number;
-
-  @Column({ default: 0, nullable: true })
-  rating?: number;
-
-  @Column({ default: 0, nullable: true })
-  pages?: number;
-
   @Column({ default: true, nullable: true })
-  isActive?: boolean;
+  status?: boolean;
+
+  @Column({ length: columnSize.large_512, nullable: true })
+  keyWords?: string;
 
   @Column({ type: 'json', nullable: true })
   metaData?: Record<string, unknown>;

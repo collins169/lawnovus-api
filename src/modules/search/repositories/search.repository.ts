@@ -11,7 +11,7 @@ export const searchCatalog = async (param: string) => {
     .createQueryBuilder('search')
     .where(
       // eslint-disable-next-line quotes
-      "(search.title ILIKE :param OR search.judge ILIKE :param OR author->>'name' ILIKE :param OR author->>'bio' ILIKE :param)",
+      "(search.title ILIKE :param OR array_to_string(search.judges, ',') ILIKE :param OR search.keyWords ILIKE :param OR search.jurisdiction ILIKE :param OR author->>'name' ILIKE :param OR author->>'bio' ILIKE :param)",
     )
     .orderBy('search.title', 'DESC')
     .setParameters({ param: `%${param}%` })

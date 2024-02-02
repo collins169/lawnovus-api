@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import * as articleRepo from '../repositories/article.repository';
-import { Article } from '../entities/article';
+import { Article } from '../entities/article.entity';
 import { CreateArticleInput } from '../dto/create-article.input';
 import { getOneDocument, getS3Instant } from '../../../documents/services/document.service';
 import { getOneCategoryById } from '../../categories/services/category.service';

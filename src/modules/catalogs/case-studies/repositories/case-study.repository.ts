@@ -1,5 +1,5 @@
 import { getEntityRepository } from '../../../../database/getEntityRepository';
-import { CaseStudy } from '../entities/case-studies';
+import { CaseStudy } from '../entities/case-studies.entity';
 
 export const getCaseStudyRepository = async () => {
   return await getEntityRepository(CaseStudy);

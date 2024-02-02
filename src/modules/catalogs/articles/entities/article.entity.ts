@@ -7,7 +7,7 @@ import { Category } from '../../categories/entities/category';
 
 @Entity('articles')
 export class Article extends BaseModelWithCreatedBy {
-  @Column({ length: columnSize.regular_64, nullable: false, unique: true })
+  @Column({ length: columnSize.large_512, nullable: false, unique: true })
   title: string;
 
   @OneToOne(() => Document)
@@ -45,6 +45,9 @@ export class Article extends BaseModelWithCreatedBy {
 
   @Column({ default: true, nullable: true })
   isActive?: boolean;
+
+  @Column({ length: columnSize.large_512, nullable: true })
+  keyWords?: string;
 
   @Column({ type: 'json', nullable: true })
   metaData?: Record<string, unknown>;

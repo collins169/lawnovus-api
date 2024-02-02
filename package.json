@@ -10,6 +10,7 @@
     "prepare": "husky install",
     "start": "concurrently --kill-others-on-fail yarn:start:services yarn:build yarn:start:sls:local",
     "start:sls:local": "node bin/wait-for-local-postgres.js && yarn typeorm migration:run && sls offline start --stage local",
+    "start:sls:dev": "sls offline start --stage dev",
     "build": "tsc",
     "build:check": "tsc --noEmit",
     "build:watch": "chokidar 'src/**/*.{ts,json}' -c 'yarn build && echo finished compiling' --initial",
