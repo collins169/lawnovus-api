@@ -17,7 +17,7 @@ export const getNoticeById = async (id: string) => {
     where: {
       id,
     },
-    relations: ['file', 'coverImage', 'type'],
+    relations: ['file', 'type'],
   });
 };
 
@@ -32,7 +32,7 @@ export const getNoticeByType = async (type: string) => {
     order: {
       createdAt: 'DESC',
     },
-    relations: ['file', 'coverImage', 'type'],
+    relations: ['file', 'type'],
   });
 };
 
@@ -42,7 +42,7 @@ export const getNotices = async () => {
     order: {
       createdAt: 'DESC',
     },
-    relations: ['file', 'coverImage', 'type'],
+    relations: ['file', 'type'],
   });
 };
 
