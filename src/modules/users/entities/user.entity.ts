@@ -35,4 +35,9 @@ export class User extends BaseModel {
   @OneToOne(() => ContactDetail, (contactDetail) => contactDetail.user, { nullable: false })
   @JoinColumn()
   contactDetail: ContactDetail;
+
+  toJSON() {
+    delete this.password;
+    return this;
+  }
 }
