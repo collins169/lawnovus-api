@@ -15,8 +15,9 @@ export const JWTTokenHandler = async (req: Request, _res: Response, next: NextFu
   }
 
   try {
-    const user = await validateToken(authorization);
-    req['user'] = user;
+    const data = await validateToken(authorization);
+    req['user'] = data.user;
+    req['userRole'] = data.role;
     next();
   } catch (error) {
     return next(error);

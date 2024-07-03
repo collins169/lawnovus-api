@@ -16,6 +16,7 @@ import {
   getAdministratorRepository,
   getAdministratorUsers,
 } from '../repositories/administrator.repository';
+import { UserRole } from '../../users/types/user.types';
 
 export const addAdmin = async (input: AddAdminInput, createdBy: string) => {
   const userRepository = await getUserRepository();
@@ -52,6 +53,7 @@ export const addAdmin = async (input: AddAdminInput, createdBy: string) => {
       username: input.username,
       password: hashPassword,
       contactDetail: newContactDetail,
+      role: UserRole.ADMIN,
       isActive: true,
     });
     const newUser = await transaction.save(userToInsert);

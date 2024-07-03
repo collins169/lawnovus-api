@@ -15,18 +15,6 @@ export const getOneUser = async (id: string) => {
   });
 };
 
-export const getAllSubscriberUser = async () => {
-  const repository = await getUserRepository();
-  const options: Record<string, any> = {
-    where: {},
-    order: {
-      id: 'ASC',
-    },
-    relations: ['subscriber'],
-  };
-  return repository.find(options);
-};
-
 export const getOneUserByUsername = async (username: string) => {
   const repository = await getUserRepository();
   return repository.findOne({

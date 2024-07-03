@@ -1,5 +1,5 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
-import { genSaltSync, hashSync } from 'bcryptjs';
+import { BadRequestException, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { map, omit } from 'lodash';
 import { getEntityManager } from '../../../database/getEntityManager';
 import { getAdministratorByUserId } from '../../admin/repositories/administrator.repository';
@@ -11,7 +11,7 @@ import {
   isPhoneNumberExisting,
 } from '../../users/repositories/contact-detail.repository';
 import { getOneUserByUsername, getUserRepository } from '../../users/repositories/user.repository';
-import { SubscriberTypes } from '../../users/types/user.types';
+import { SubscriberTypes, UserRole } from '../../users/types/user.types';
 import { RegisterInput } from '../dto/register.input';
 import {
   deleteSubscriber as deleteSubscriberRepo,
@@ -22,6 +22,10 @@ import {
   updateSubscriber,
 } from '../repositories/subscriber.repository';
 import { Status } from '../types';
+import { getUserById } from '../../users/services/user.service';
+import { CreateSubscriberInput } from '../dto/create.subscriber.input';
+import { User } from '../../users/entities/user.entity';
+import { UpdateSubscriberUserInput } from '../dto/update.subscriber.user.input';
 
 export const getAllSubscribers = async () => {
   const list = await getAllSubscriber();
@@ -74,7 +78,6 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
   if (phoneExist) {
     throw new ConflictException('contact person phone already exist');
   }
-  console.log('validation done');
   const salt = genSaltSync(10);
   const hashPassword = hashSync(input.password, salt);
   const entityManager = await getEntityManager();
@@ -100,10 +103,107 @@ export const createSubscriber = async (input: RegisterInput, createdBy?: string)
       name: input.name,
       subscriber: newSubscriber,
       contactDetail: newContactDetail,
+      role: UserRole.SUBSCRIBER,
       isActive: true,
     });
     const newUser = await transaction.save(userToInsert);
     return { user: omit(newUser, ['password']), subscriber: newSubscriber, contactDetail: newContactDetail };
+  });
+};
+
+export const subscriberCreateUser = async (user: User, input: CreateSubscriberInput) => {
+  if (user.subscriber.type !== SubscriberTypes.INSTITUTIONAL) {
+    // eslint-disable-next-line quotes
+    throw new UnauthorizedException("You don't have right to perform this action");
+  }
+  const userRepository = await getUserRepository();
+  const contactDetailRepository = await getContactDetailRepository();
+  const [userExist, emailExist, phoneExist, subscriber] = await Promise.all([
+    getOneUserByUsername(input.username),
+    isEmailExisting(input.contactDetail.email),
+    isPhoneNumberExisting(input.contactDetail.phone),
+    getSubscriberById(user.subscriber.id),
+  ]);
+
+  if (userExist) {
+    throw new ConflictException('username already exist');
+  }
+
+  if (emailExist) {
+    throw new ConflictException('email already exist');
+  }
+
+  if (phoneExist) {
+    throw new ConflictException('phone already exist');
+  }
+
+  if (subscriber) {
+    throw new ConflictException('Invalid Subscriber');
+  }
+
+  const salt = genSaltSync(10);
+  const hashPassword = hashSync(input.password, salt);
+  const entityManager = await getEntityManager();
+  return await entityManager.transaction(async (transaction) => {
+    const contactDetailToInsert = contactDetailRepository.create({
+      ...input.contactDetail,
+      isContactPerson: false,
+    });
+    const newContactDetail = await transaction.save(contactDetailToInsert);
+    const userToInsert = userRepository.create({
+      username: input.username,
+      password: hashPassword,
+      name: newContactDetail.name,
+      subscriber,
+      contactDetail: newContactDetail,
+      isActive: true,
+    });
+    const newUser = await transaction.save(userToInsert);
+    return { user: newUser.toJSON(), subscriber, contactDetail: newContactDetail };
+  });
+};
+
+export const subscriberUpdateUser = async (user: User, input: UpdateSubscriberUserInput) => {
+  if (user.subscriber.type !== SubscriberTypes.INSTITUTIONAL) {
+    // eslint-disable-next-line quotes
+    throw new UnauthorizedException("You don't have right to perform this action");
+  }
+  const userRepository = await getUserRepository();
+  const contactDetailRepository = await getContactDetailRepository();
+  const [emailExist, phoneExist, subscriber] = await Promise.all([
+    isEmailExisting(input.contactDetail.email),
+    isPhoneNumberExisting(input.contactDetail.phone),
+    getSubscriberById(user.subscriber.id),
+  ]);
+
+  if (emailExist) {
+    throw new ConflictException('email already exist');
+  }
+
+  if (phoneExist) {
+    throw new ConflictException('phone already exist');
+  }
+
+  if (subscriber) {
+    throw new ConflictException('Invalid Subscriber');
+  }
+
+  const entityManager = await getEntityManager();
+  return await entityManager.transaction(async (transaction) => {
+    const user = await getUserById(input.userId);
+    const contactDetailToUpdate = contactDetailRepository.merge(user.contactDetail, {
+      ...input.contactDetail,
+    });
+    const newContactDetail = await transaction.save(contactDetailToUpdate);
+
+    const userToUpdate = userRepository.merge(user, {
+      name: newContactDetail.name,
+      subscriber,
+      contactDetail: newContactDetail,
+      isActive: input.status,
+    });
+    const newUser = await transaction.save(userToUpdate);
+    return { user: newUser.toJSON(), subscriber, contactDetail: newContactDetail };
   });
 };
 
@@ -134,4 +234,39 @@ export const deleteSubscriber = async (id: string) => {
 
 export const deleteMultipleSubscriber = async (ids: string[]) => {
   return await deleteSubscriberRepo(ids);
+};
+
+export const subscriberChangePassword = async ({
+  user,
+  oldPassword,
+  newPassword,
+}: {
+  user: User;
+  oldPassword: string;
+  newPassword: string;
+}) => {
+  const subscriber = await getOneSubscriber(user.subscriber.id);
+  if (!subscriber) {
+    throw new NotFoundException(`subscriber with id: ${user.subscriber.id} is not found`);
+  }
+  const userRepository = await getUserRepository();
+  if (oldPassword === newPassword) {
+    throw new ConflictException('New password cannot be the same as old password');
+  }
+  const userExisting = await getUserById(user.id);
+  if (!user) {
+    throw new NotFoundException('User was not found');
+  }
+  const isPasswordSame = compareSync(oldPassword, user.password);
+
+  if (!isPasswordSame) {
+    throw new UnauthorizedException('Old password is not correct');
+  }
+  const salt = genSaltSync(10);
+  const hashPassword = hashSync(newPassword, salt);
+  const userToMerge = userRepository.merge(userExisting, {
+    password: hashPassword,
+  });
+
+  await userRepository.save(userToMerge);
 };

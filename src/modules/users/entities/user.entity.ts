@@ -3,6 +3,7 @@ import { Subscriber } from '../../subscriber/entities/subscriber.entity';
 import { columnSize } from '../../../common/constants/columnSize';
 import { BaseModel } from '../../../common/models/base.model';
 import { ContactDetail } from './contact-detail.entity';
+import { UserRole } from '../types/user.types';
 
 @Entity('users')
 export class User extends BaseModel {
@@ -35,6 +36,9 @@ export class User extends BaseModel {
   @OneToOne(() => ContactDetail, (contactDetail) => contactDetail.user, { nullable: false })
   @JoinColumn()
   contactDetail: ContactDetail;
+
+  @Column({ type: 'simple-enum', enum: UserRole, default: UserRole.SUBSCRIBER })
+  role: UserRole;
 
   toJSON() {
     delete this.password;

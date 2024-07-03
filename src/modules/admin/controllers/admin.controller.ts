@@ -3,12 +3,12 @@ import { HttpStatus } from '@nestjs/common';
 import { addAdmin, changeAdminPassword, listAdminUser } from '../services/administrator.service';
 import { AuthenticatedRequest } from '../../../common/types';
 import { AddAdminInput } from '../dto/addAdmin.input';
-import { changePasswordInput } from '../dto/changePassword.input';
+import { changePasswordInput } from '../../../common/dto/changePassword.input';
 
 export const addAdminCtrl = async (req: AuthenticatedRequest, res: Response) => {
   const input = req.body as AddAdminInput;
   const {
-    user: { id },
+    administrator: { id },
   } = req;
   await addAdmin(input, id);
   return res.sendStatus(HttpStatus.NO_CONTENT);
@@ -17,7 +17,7 @@ export const addAdminCtrl = async (req: AuthenticatedRequest, res: Response) => 
 export const changePasswordCtrl = async (req: AuthenticatedRequest, res: Response) => {
   const { oldPassword, newPassword } = req.body as changePasswordInput;
   const {
-    user: { id },
+    administrator: { id },
   } = req;
 
   await changeAdminPassword({ id, oldPassword, newPassword });

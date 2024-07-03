@@ -157,11 +157,13 @@ export const validateToken = async (token: string) => {
     throw new UnauthorizedException('invalid token');
   }
 
-  const [admin, user] = await Promise.all([getAdministratorByUserName(username), getUserByUsername(username)]);
+  const admin = await getAdministratorByUserName(username);
+  const user = await getUserByUsername(username);
 
   const validatedUser = {
-    ...user.toJSON(),
-    role: admin?.type || 'subscriber',
+    user: user.toJSON(),
+    admin: admin,
+    role: user.role,
   };
 
   return validatedUser;
