@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { isEmpty, omit } from 'lodash';
@@ -69,31 +69,31 @@ export const addAdmin = async (input: AddAdminInput, createdBy: string) => {
 
 export const changeAdminPassword = async ({
   id,
-  oldPassword,
-  newPassword,
+  password,
+  confirmPassword,
 }: {
   id: string;
-  oldPassword: string;
-  newPassword: string;
+  password: string;
+  confirmPassword: string;
 }) => {
   const userRepository = await getUserRepository();
-  if (oldPassword === newPassword) {
-    throw new ConflictException('New password cannot be the same as old password');
+  if (password !== confirmPassword) {
+    throw new BadRequestException('Password and confirm password not the same');
   }
   const admin = await getAdministratorById(id);
   if (!admin) {
     throw new NotFoundException('Administrator not found');
   }
   const {
-    user: { password },
+    user: { password: oldPassword },
   } = admin;
-  const isPasswordSame = compareSync(oldPassword, password);
+  const isPasswordSame = compareSync(password, oldPassword);
 
   if (!isPasswordSame) {
     throw new UnauthorizedException('Old password is not correct');
   }
   const salt = genSaltSync(10);
-  const hashPassword = hashSync(newPassword, salt);
+  const hashPassword = hashSync(password, salt);
   const userToMerge = userRepository.merge(admin.user, {
     password: hashPassword,
   });

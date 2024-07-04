@@ -15,12 +15,12 @@ export const addAdminCtrl = async (req: AuthenticatedRequest, res: Response) => 
 };
 
 export const changePasswordCtrl = async (req: AuthenticatedRequest, res: Response) => {
-  const { oldPassword, newPassword } = req.body as changePasswordInput;
+  const { password, confirmPassword } = req.body as changePasswordInput;
   const {
     administrator: { id },
   } = req;
 
-  await changeAdminPassword({ id, oldPassword, newPassword });
+  await changeAdminPassword({ id, password, confirmPassword });
   return res.sendStatus(HttpStatus.NO_CONTENT);
 };
 
