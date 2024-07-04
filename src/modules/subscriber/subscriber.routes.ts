@@ -19,13 +19,14 @@ router.patch(
   handleAsyncErrors(subscriberController.changeSubscriberStatusByIdCtrl),
 );
 router.delete('/:id', handleAsyncErrors(subscriberController.deleteSubscriberCtrl));
+router.get('/users', handleAsyncErrors(subscriberController.getSubscriberUsers));
 router.post(
-  '/users/',
+  '/users',
   validateBody(CreateSubscriberInput),
   handleAsyncErrors(subscriberController.subscriberCreateUser),
 );
 router.patch(
-  '/users/',
+  '/users',
   validateBody(UpdateSubscriberUserInput),
   handleAsyncErrors(subscriberController.subscriberUpdateUser),
 );

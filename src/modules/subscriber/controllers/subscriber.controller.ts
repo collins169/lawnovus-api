@@ -73,3 +73,9 @@ export const subscriberCreateUser = async (req: AuthenticatedRequest, res: Respo
   await subscriberService.subscriberCreateUser(user, input);
   return res.sendStatus(HttpStatus.NO_CONTENT);
 };
+
+export const getSubscriberUsers = async (req: AuthenticatedRequest, res: Response) => {
+  const { user } = req;
+  const users = await subscriberService.getSubscriberUsers(user);
+  return res.status(HttpStatus.OK).json(users);
+};

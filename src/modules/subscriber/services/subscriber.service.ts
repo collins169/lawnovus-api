@@ -270,3 +270,9 @@ export const subscriberChangePassword = async ({
 
   await userRepository.save(userToMerge);
 };
+
+export const getSubscriberUsers = async (user: User) => {
+  const subscriber = await getOneSubscriber(user.subscriber.id);
+
+  return subscriber.users;
+};
