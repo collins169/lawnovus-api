@@ -10,15 +10,6 @@ import { changePasswordInput } from '../../common/dto/changePassword.input';
 
 const router: express.Router = express.Router();
 
-router.post('/', validateBody(RegisterInput), handleAsyncErrors(subscriberController.createSubscriberCtrl));
-router.get('/', handleAsyncErrors(subscriberController.getAllSubscriberCtrl));
-router.get('/:id', handleAsyncErrors(subscriberController.getSubscriberByIdCtrl));
-router.patch(
-  '/:id/:status',
-  UpdateStatusInputValidator,
-  handleAsyncErrors(subscriberController.changeSubscriberStatusByIdCtrl),
-);
-router.delete('/:id', handleAsyncErrors(subscriberController.deleteSubscriberCtrl));
 router.get('/users', handleAsyncErrors(subscriberController.getSubscriberUsers));
 router.post(
   '/users',
@@ -35,5 +26,14 @@ router.patch(
   validateBody(changePasswordInput),
   handleAsyncErrors(subscriberController.subscriberChangePassword),
 );
+router.post('/', validateBody(RegisterInput), handleAsyncErrors(subscriberController.createSubscriberCtrl));
+router.get('/', handleAsyncErrors(subscriberController.getAllSubscriberCtrl));
+router.get('/:id', handleAsyncErrors(subscriberController.getSubscriberByIdCtrl));
+router.patch(
+  '/:id/:status',
+  UpdateStatusInputValidator,
+  handleAsyncErrors(subscriberController.changeSubscriberStatusByIdCtrl),
+);
+router.delete('/:id', handleAsyncErrors(subscriberController.deleteSubscriberCtrl));
 
 export const subscriberRoutes = router;

@@ -238,32 +238,32 @@ export const deleteMultipleSubscriber = async (ids: string[]) => {
 
 export const subscriberChangePassword = async ({
   user,
-  oldPassword,
-  newPassword,
+  password,
+  confirmPassword,
 }: {
   user: User;
-  oldPassword: string;
-  newPassword: string;
+  password: string;
+  confirmPassword: string;
 }) => {
   const subscriber = await getOneSubscriber(user.subscriber.id);
   if (!subscriber) {
     throw new NotFoundException(`subscriber with id: ${user.subscriber.id} is not found`);
   }
   const userRepository = await getUserRepository();
-  if (oldPassword === newPassword) {
-    throw new ConflictException('New password cannot be the same as old password');
+  if (password !== confirmPassword) {
+    throw new BadRequestException('Password and confirm password not the same');
   }
   const userExisting = await getUserById(user.id);
   if (!user) {
     throw new NotFoundException('User was not found');
   }
-  const isPasswordSame = compareSync(oldPassword, user.password);
+  const isPasswordSame = compareSync(password, user.password);
 
-  if (!isPasswordSame) {
-    throw new UnauthorizedException('Old password is not correct');
+  if (isPasswordSame) {
+    throw new ConflictException('Password can not be the same as old password');
   }
   const salt = genSaltSync(10);
-  const hashPassword = hashSync(newPassword, salt);
+  const hashPassword = hashSync(password, salt);
   const userToMerge = userRepository.merge(userExisting, {
     password: hashPassword,
   });
