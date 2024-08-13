@@ -44,7 +44,7 @@ export const login = async (input: AuthUserInput): Promise<{ user: Record<string
   return {
     token,
     user: {
-      ...omit(user, ['password']),
+      ...user.toJSON(),
       role: 'subscriber',
     },
   };
@@ -78,7 +78,7 @@ export const adminLogin = async (input: AuthUserInput): Promise<{ user: Record<s
   return {
     token,
     user: {
-      ...omit(user, ['password']),
+      ...user.toJSON(),
       role: admin?.type,
     },
   };
@@ -136,7 +136,7 @@ export const register = async (input: RegisterInput) => {
       isActive: true,
     });
     const newUser = await transaction.save(userToInsert);
-    return { user: omit(newUser, ['password']), subscriber: newSubscriber, contactDetail: newContactDetail };
+    return { user: newUser.toJSON(), subscriber: newSubscriber, contactDetail: newContactDetail };
   });
 };
 
@@ -149,7 +149,7 @@ export const validateToken = async (token: string) => {
   }
   const splitToken = token.split(' ')[1];
 
-  const tokenValue = verify(splitToken, process.env.JWT_SECRET || 'lawnovus-api') as JwtPayload;
+  const tokenValue = verify(splitToken, process.env.JWT_SECRET ?? 'lawnovus-api') as JwtPayload;
 
   const username = tokenValue.sub || '';
 
@@ -157,12 +157,14 @@ export const validateToken = async (token: string) => {
     throw new UnauthorizedException('invalid token');
   }
 
-  const [admin, user] = await Promise.all([getAdministratorByUserName(username), getUserByUsername(username)]);
+  const admin = await getAdministratorByUserName(username);
+  const user = await getUserByUsername(username);
 
-  const validatdUser = {
-    ...omit(user, ['subscriber', 'password']),
-    role: admin?.type || 'subscriber',
+  const validatedUser = {
+    user: user.toJSON(),
+    admin: admin,
+    role: user.role,
   };
 
-  return validatdUser;
+  return validatedUser;
 };

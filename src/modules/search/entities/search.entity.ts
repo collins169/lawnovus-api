@@ -8,7 +8,11 @@ select 'articles' as entity, ar.id, ar.title, ar."coverImageId", ar."typeId", to
 union
 select 'case-studies' as entity, cs.id, cs.title, cs."coverImageId", cs."typeId", null as author, cs.judges, cs."publicationDate", cs."keyWords", null as "jurisdiction"   from "${process.env.STAGE}-case-studies" cs
 union
-select 'legislation' as entity, le.id, le.title, le."coverImageId", le."typeId", null as author, ARRAY[]::varchar[]  as judges, le."publicationDate", le."keyWords", le."jurisdiction"   from "${process.env.STAGE}-legislation" le`,
+select 'legislation' as entity, le.id, le.title, le."coverImageId", le."typeId", null as author, ARRAY[]::varchar[]  as judges, le."publicationDate", le."keyWords", le."jurisdiction"   from "${process.env.STAGE}-legislation" le
+union
+select 'notices' as entity, no.id, no.title, null as coverImageId, no."typeId", null as author, ARRAY[]::varchar[]  as judges, no."publicationDate", no."keyWords", no."jurisdiction"  from "${process.env.STAGE}-notices" no
+union
+select 'treaties' as entity, tr.id, tr.title, null as coverImageId, tr."typeId", null as author, ARRAY[]::varchar[]  as judges, tr."publicationDate", tr."keyWords", null as jurisdiction   from "${process.env.STAGE}-treaties" tr`,
 })
 export class Search {
   @ViewColumn()

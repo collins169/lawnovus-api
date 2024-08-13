@@ -1,7 +1,6 @@
 export enum UserRole {
   ADMIN = 'admin',
-  OFFICER = 'officer',
-  AGENT = 'agent',
+  SUBSCRIBER = 'subscriber',
 }
 
 export enum GenderEnum {
