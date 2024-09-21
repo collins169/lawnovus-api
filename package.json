@@ -92,7 +92,7 @@
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "helmet": "^7.0.0",
     "husky": "^8.0.3",
     "jsonwebtoken": "^9.0.0",
