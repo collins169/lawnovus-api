@@ -97,7 +97,7 @@
     "husky": "^8.0.3",
     "jsonwebtoken": "^9.0.0",
     "lambda-multipart-parser": "^1.0.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "luxon": "^3.3.0",
     "mime-types": "^2.1.35",
     "pg": "^8.10.0",
